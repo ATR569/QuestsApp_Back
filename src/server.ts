@@ -5,6 +5,8 @@ import { Application } from 'express'
 import { notFoundHandler } from './ui/exception/exception.handler'
 import * as http from 'http'
 
+import { GroupsController } from '@src/ui/controllers/groups.controller'
+
 export class SetupServer extends Server {
     private server?: http.Server
 
@@ -34,9 +36,10 @@ export class SetupServer extends Server {
     }
 
     private setupControllers(): void {
+        const groupsController = new GroupsController()
         // Add all controllers here
         const controllers: Array<object> = [
-            
+            groupsController
         ]
 
         this.addControllers(controllers)
