@@ -39,7 +39,7 @@ export class SetupServer extends Server {
         const groupsController = new GroupsController()
         // Add all controllers here
         const controllers: Array<object> = [
-            groupsController
+            groupsController,
         ]
 
         this.addControllers(controllers)

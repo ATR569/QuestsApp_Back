@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Put } from '@overnightjs/core'
+import { Controller, Delete, Get, Post, Put } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
+import {groupsService} from '@src/application/services/groups.service'
+import { Group } from '@src/application/domain/model/group'
 
 @Controller('groups')
 export class GroupsController {
@@ -15,8 +17,15 @@ export class GroupsController {
      */
     @Post('')
     public async saveGroup(req: Request, res: Response): Promise<Response> {
-        // TO DO
-        return res.status(HttpStatus.CREATED).send('Save Group')
+        try {
+            const group = new Group().fromJSON(req.body).asNewEntity()
+            // TO DO: Validation
+            const result = await groupsService.add(group)
+            return res.status(HttpStatus.CREATED).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
     
     /**
@@ -62,7 +71,7 @@ export class GroupsController {
      * @param {Response} res 
      * @returns {Group}
      */
-    @Put(':id')
+    @Delete(':id')
     public async removeGroup(req: Request, res: Response): Promise<Response> {
         return res.status(HttpStatus.OK).send('Remove group')
     }
@@ -78,7 +87,5 @@ export class GroupsController {
     public async updateGroupById(req: Request, res: Response): Promise<Response> {
         return res.status(HttpStatus.OK).send('Update group by id')
     }
-
-
 
 }
