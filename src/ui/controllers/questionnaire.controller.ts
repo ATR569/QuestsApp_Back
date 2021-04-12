@@ -2,6 +2,8 @@ import { Controller, Delete, Get, Post, Put } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
+import { questionnairesService } from '@src/application/services/questionnaire.service'
+import { Questionnaire } from '@src/application/domain/model/Questionnaire'
 
 @Controller('questionnaires')
 export class QuestionnaireController {
@@ -15,7 +17,15 @@ export class QuestionnaireController {
      */
     @Post('')
     public async saveQuestionnaire(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.CREATED).send('Save Questionnaire')
+        try {
+            const questionnaire = new Questionnaire().fromJSON(req.body).asNewEntity()
+
+            const result = await questionnairesService.add(questionnaire)
+            return res.status(HttpStatus.CREATED).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -27,7 +37,14 @@ export class QuestionnaireController {
      */
     @Get('')
     public async getAllQuestionnaires(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.OK).send('Get all questionnaires')
+        try {
+            const filters = { ...req.query }
+            const result = await questionnairesService.getAll(filters)
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -37,9 +54,15 @@ export class QuestionnaireController {
      * @param {Response} res 
      * @returns {Questionnaire}
      */
-    @Get(':id')
+    @Get(':questionnaire_id')
     public async getQuestionnaireById(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.OK).send('Get questionnaire by id')
+        try {
+            const result = await questionnairesService.getById(req.params.questionnaire_id)
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -48,9 +71,15 @@ export class QuestionnaireController {
      * @param {Request} req 
      * @param {Response} res 
      */
-    @Delete(':id')
+    @Delete(':questionnaire_id')
     public async removeQuestionnaire(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.NO_CONTENT).send()
+        try {
+            const result = await questionnairesService.remove(req.params.questionnaire_id)
+            return res.status(HttpStatus.NO_CONTENT).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -62,18 +91,20 @@ export class QuestionnaireController {
      */
     @Post(':id/questions')
     public async saveQuestion(req: Request, res: Response): Promise<Response> {
+        //TODO
         return res.status(HttpStatus.CREATED).send('Save Question')
     }
 
     /**
-     * Get all questions of the questionnaire
+     * Get all questions from questionnaire
      * 
      * @param {Request} req 
      * @param {Response} res 
      * @returns {Array<Question>}
      */
     @Get(':id/questions')
-    public async getAllQuestions(req: Request, res: Response): Promise<Response> {
+    public async getAllQuestionsFromQuestionnaire(req: Request, res: Response): Promise<Response> {
+        //TODO
         return res.status(HttpStatus.OK).send('Get questions by questionnaire_id')
     }
 }
