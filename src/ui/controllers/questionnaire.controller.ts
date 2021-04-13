@@ -1,10 +1,11 @@
-import { Controller, Delete, Get, Post } from '@overnightjs/core'
+import { Controller, Delete, Get, Patch, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
 import { questionnairesService } from '@src/application/services/questionnaire.service'
 import { Questionnaire } from '@src/application/domain/model/questionnaire'
 import { Question } from '@src/application/domain/model/question'
+import { QuestionnaireValidator } from '@src/application/domain/validation/questionnaire.validator'
 
 @Controller('questionnaires')
 export class QuestionnaireController {
@@ -20,7 +21,7 @@ export class QuestionnaireController {
     public async saveQuestionnaire(req: Request, res: Response): Promise<Response> {
         try {
             const questionnaire = new Questionnaire().fromJSON(req.body).asNewEntity()
-
+            QuestionnaireValidator.validate(questionnaire)
             const result = await questionnairesService.add(questionnaire)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
@@ -59,6 +60,27 @@ export class QuestionnaireController {
     public async getQuestionnaireById(req: Request, res: Response): Promise<Response> {
         try {
             const result = await questionnairesService.getById(req.params.questionnaire_id)
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
+    }
+
+    /**
+     * Update a questionnaire by id
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     * @returns {Questionnaire}
+     */
+    @Patch(':questionnaire_id')
+    public async updateQuestionnaireById(req: Request, res: Response): Promise<Response> {
+        try {
+            const questionnaire = new Questionnaire().fromJSON(req.body)
+            questionnaire.id = req.params.questionnaire_id
+            QuestionnaireValidator.validate(questionnaire)
+            const result = await questionnairesService.update(questionnaire)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)

@@ -55,7 +55,7 @@ class QuestionnaireService implements IService<Questionnaire> {
     }
 
     public async update(item: Questionnaire): Promise<Questionnaire> {
-        return Promise.reject(new Error('Method not implemented. Update questionnaire by id'))
+        return Promise.resolve(new Questionnaire().fromJSON(item.toJSON()))
     }
 
     public async remove(id: string): Promise<Questionnaire> {
