@@ -54,7 +54,7 @@ export class UsersController {
 
     /**
      * 
-     * Get all users
+     * Get all user questionnaires
      * 
      * @param {Request} req 
      * @param {Response} res 
@@ -64,7 +64,7 @@ export class UsersController {
     public async getAllQuestionnaires(req: Request, res: Response) {
         try {
             const result = await userService.getAllQuestionnaires(req.params.user_id)
-            // TO DO: Validation
+            
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -75,6 +75,8 @@ export class UsersController {
 
     /**
      * 
+     * Get all user groups
+     * 
      * @param {Request} req 
      * @param {Response} res 
      * @returns {Collection<Group>}
@@ -83,7 +85,7 @@ export class UsersController {
     public async getAllGroups(req: Request, res: Response) {
         try {
             const result = await userService.getAllGroups(req.params.user_id)
-            // TO DO: Validation
+
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -126,8 +128,11 @@ export class UsersController {
     @Patch(':id/password')
     public async updatePassword(req: Request, res: Response) {
         try {
-            // Need to do
-            return res.status(HttpStatus.OK).send('Password updated with successed')
+            const new_password = req.body
+            
+            const result = await userService.updatePassword(new_password)
+
+            return res.status(HttpStatus.OK).send(result)
         } catch (error) {
             const apiException = ApiExceptionManager.build(error)
 

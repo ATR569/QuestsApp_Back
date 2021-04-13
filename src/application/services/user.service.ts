@@ -8,8 +8,13 @@ class UsersService implements IService<User> {
 
         return Promise.resolve(user)
     }
+
     public async getAll(filters: object): Promise<Array<User>> {
-        const createUse = {
+        return Promise.reject(new Error('Method not implemented. Get all users'))
+    }
+
+    public async getById(id: string): Promise<User> {
+        const createUser = {
             id: '8d12a961a1s2asda725dsa',
             name: 'Ramon Rodrigues',
             email: 'rrsales@email.com',
@@ -17,14 +22,7 @@ class UsersService implements IService<User> {
             institution: 'UEPB'
         }
 
-        const usersMoked: Array<User> = [
-            new User().fromJSON(createUse)
-        ]
-
-        return Promise.resolve(usersMoked)
-    }
-    public async getById(id: string): Promise<User> {
-        return Promise.reject(new Error('Method not implemented. Get user by id'))
+        return Promise.resolve(new User().fromJSON(createUser))
     }
     public async update(user: User): Promise<User> {
         return Promise.reject(new Error('Method not implemented. Update user by id'))
@@ -41,7 +39,7 @@ class UsersService implements IService<User> {
         return Promise.reject(new Error('Method not implemented. Get all user groups'))
     }
 
-    public async updatePassword(old_password: string, new_password: string): Promise<String> {
+    public async updatePassword(new_password: string): Promise<String> {
         return Promise.reject(new Error('Method not implemented. Update password'))
     }
 }
