@@ -2,14 +2,15 @@ import { Controller, Get, Patch, Post, Put } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
-import { UsersService } from '@src/application/services/user.service'
+import { User } from '@src/application/domain/model/User'
+import { userService } from '@src/application/services/user.service'
 
 @Controller('users')
 export class UsersController {
 
-    private userService = new UsersService()
-
     /**
+     * 
+     * Create new User
      * 
      * @param {Request} req 
      * @param {Response} res
@@ -17,14 +18,22 @@ export class UsersController {
      */
     @Post('')
     public async saveUser(req: Request, res: Response) {
-        let user = new String('User') // instanciar um Usuario
+        try {
+            const user = new User().fromJSON(req.body).asNewEntity()
 
-        this.userService.add('user')
+            const result = await userService.add(user)
 
-        return res.status(HttpStatus.CREATED).send('Save User')
+            return res.status(HttpStatus.CREATED).send(result)
+        } catch (error) {
+            const apiException = ApiExceptionManager.build(error)
+
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
+     * 
+     * Get User by id
      * 
      * @param {Request} req 
      * @param {Response} res 
@@ -32,10 +41,20 @@ export class UsersController {
      */
     @Get(':id')
     public async getUserById(req: Request, res: Response) {
-        return res.status(HttpStatus.OK).send('User')
+        try {
+            const result = await userService.getById(req.params.user_id)
+
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
+     * 
+     * Get all users
      * 
      * @param {Request} req 
      * @param {Response} res 
@@ -43,7 +62,15 @@ export class UsersController {
      */
     @Get(':id/questionnaires')
     public async getAllQuestionnaires(req: Request, res: Response) {
-        return res.status(HttpStatus.OK).send('All user Questionnaries')
+        try {
+            const result = await userService.getAllQuestionnaires(req.params.user_id)
+            // TO DO: Validation
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -54,10 +81,20 @@ export class UsersController {
      */
     @Get(':id/groups')
     public async getAllGroups(req: Request, res: Response) {
-        return res.status(HttpStatus.OK).send('All user Groups')
+        try {
+            const result = await userService.getAllGroups(req.params.user_id)
+            // TO DO: Validation
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
+     * 
+     * Update user
      * 
      * @param {Request} req 
      * @param {Response} res 
@@ -65,10 +102,22 @@ export class UsersController {
      */
     @Put(':id')
     public async updateUser(req: Request, res: Response) {
-        return res.status(HttpStatus.OK).send('Updated user')
+        try {
+            const user = new User().fromJSON(req.body)
+
+            const result = await userService.update(user)
+
+            return res.status(HttpStatus.OK).send(result)
+        } catch (error) {
+            const apiException = ApiExceptionManager.build(error)
+
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
+     * 
+     * Reset password
      * 
      * @param {Request} req 
      * @param {Response} res 
@@ -76,6 +125,13 @@ export class UsersController {
      */
     @Patch(':id/password')
     public async updatePassword(req: Request, res: Response) {
-        return res.status(HttpStatus.OK).send('Updated user password')
+        try {
+            // Need to do
+            return res.status(HttpStatus.OK).send('Password updated with successed')
+        } catch (error) {
+            const apiException = ApiExceptionManager.build(error)
+
+            return res.status(apiException.code).send(apiException)
+        }
     }
 }
