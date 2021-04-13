@@ -2,8 +2,9 @@ import { Controller, Delete, Get, Patch, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
-import {groupsService} from '@src/application/services/groups.service'
+import { groupsService} from '@src/application/services/groups.service'
 import { Group } from '@src/application/domain/model/group'
+import { GroupValidator } from '@src/application/domain/validation/group.validator'
 
 @Controller('groups')
 export class GroupsController {
@@ -19,7 +20,9 @@ export class GroupsController {
     public async saveGroup(req: Request, res: Response): Promise<Response> {
         try {
             const group = new Group().fromJSON(req.body).asNewEntity()
-            // TO DO: Validation
+            
+            GroupValidator.validateCreate(group)
+            
             const result = await groupsService.add(group)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
