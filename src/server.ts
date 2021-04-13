@@ -7,11 +7,13 @@ import * as http from 'http'
 
 import { GroupsController } from '@src/ui/controllers/groups.controller'
 import { QuestionnaireController } from '@src/ui/controllers/questionnaire.controller'
+import { MongoDB } from './infrastructure/database/mongo.db'
 
 export class SetupServer extends Server {
+    
     private server?: http.Server
 
-    constructor(private port = 3000) {
+    constructor(private port = 3000, private readonly database = new MongoDB()) {
         super()
     }
 
@@ -19,6 +21,7 @@ export class SetupServer extends Server {
         this.setupExpress()
         this.setupControllers()
         this.setupErrorsHandler()
+        this.setupDatabase()
     }
 
     public start(): void {
@@ -47,6 +50,10 @@ export class SetupServer extends Server {
         ]
 
         this.addControllers(controllers)
+    }
+
+    private async setupDatabase(): Promise<void> {
+        await this.database.connect('mongodb://localhost:27017/questsapp')
     }
 
     public getApp(): Application {

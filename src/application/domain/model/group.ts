@@ -1,11 +1,13 @@
 import { Entity } from './entity'
-import { IJSONTransformable } from './json.transformer.interface';
+import { IJSONTransformable } from './json.transformer.interface'
+import { Questionnaire } from './questionnaire'
+import { User } from './User'
 
 export class Group extends Entity implements IJSONTransformable<Group> {
     private _name?: string
-    private _administrator?: object // User
-    private _members?: Array<object> // Array<User> 
-    private _questionnaires?: Array<object> // Array<Questionnaires>
+    private _administrator?: User 
+    private _members?: Array<User> 
+    private _questionnaires?: Array<Questionnaire> 
 
     get name() : string | undefined{
         return this._name
@@ -15,27 +17,27 @@ export class Group extends Entity implements IJSONTransformable<Group> {
         this._name = name
     }
 
-    get administrator() : object | undefined{
+    get administrator() : User | undefined{
         return this._administrator
     }
 
-    set administrator(administrator: object | undefined) {
+    set administrator(administrator: User | undefined) {
         this._administrator = administrator
     }
 
-    get members() : Array<object> | undefined{
+    get members() : Array<User> | undefined{
         return this._members
     }
 
-    set members(members: Array<object> | undefined) {
+    set members(members: Array<User> | undefined) {
         this._members = members
     }
 
-    get questionnaires() : Array<object> | undefined{
+    get questionnaires() : Array<Questionnaire> | undefined{
         return this._questionnaires
     }
 
-    set questionnaires(questionnaires: Array<object> | undefined) {
+    set questionnaires(questionnaires: Array<Questionnaire> | undefined) {
         this._questionnaires = questionnaires
     }
     

@@ -22,7 +22,7 @@ export class GroupsController {
             const group = new Group().fromJSON(req.body).asNewEntity()
             
             GroupValidator.validateCreate(group)
-            
+
             const result = await groupsService.add(group)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
@@ -115,7 +115,8 @@ export class GroupsController {
     public async updateGroupById(req: Request, res: Response): Promise<Response> {
         try {
             const group = new Group().fromJSON(req.body)
-            // TO DO: Validation
+            GroupValidator.validateUpdate(group)
+            
             const result = await groupsService.update(group)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
