@@ -3,7 +3,7 @@
  * 
  * @abstract
  */
- export abstract class Entity {
+export abstract class Entity {
     private _id?: string
 
     get id(): string | undefined {
