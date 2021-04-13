@@ -1,9 +1,10 @@
-import { Controller, Delete, Get, Post, Put } from '@overnightjs/core'
+import { Controller, Delete, Get, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
 import { questionnairesService } from '@src/application/services/questionnaire.service'
-import { Questionnaire } from '@src/application/domain/model/Questionnaire'
+import { Questionnaire } from '@src/application/domain/model/questionnaire'
+import { Question } from '@src/application/domain/model/question'
 
 @Controller('questionnaires')
 export class QuestionnaireController {
@@ -89,10 +90,18 @@ export class QuestionnaireController {
      * @param {Response} res 
      * @returns {Question}
      */
-    @Post(':id/questions')
+    @Post(':questionnaire_id/questions')
     public async saveQuestion(req: Request, res: Response): Promise<Response> {
-        //TODO
-        return res.status(HttpStatus.CREATED).send('Save Question')
+        try {
+            const questionnaire_id = req.params.questionnaire_id
+            const createdQuestion = new Question().fromJSON(req.body).asNewEntity()
+
+            const result = await questionnairesService.addQuestion(questionnaire_id, createdQuestion)
+            return res.status(HttpStatus.CREATED).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -102,9 +111,16 @@ export class QuestionnaireController {
      * @param {Response} res 
      * @returns {Array<Question>}
      */
-    @Get(':id/questions')
+    @Get(':questionnaire_id/questions')
     public async getAllQuestionsFromQuestionnaire(req: Request, res: Response): Promise<Response> {
-        //TODO
-        return res.status(HttpStatus.OK).send('Get questions by questionnaire_id')
+        try {
+            const result = await questionnairesService
+                .getAllQuestionsFromQuestionnaire(req.params.questionnaire_id)
+
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 }
