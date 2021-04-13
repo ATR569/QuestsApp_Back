@@ -1,11 +1,13 @@
 import { Group } from '../domain/model/group';
 import { IService } from '../port/service.interface'
+import { groupsRepository } from '@src/infrastructure/repository/groups.repository'
 
 class GroupsService implements IService<Group> {
 
     public async add(group: Group): Promise<Group> {
-        group.id = '8d12a961a1s2asda725dsa'
-        return Promise.resolve(group)
+        return groupsRepository.create(group)
+        // group.id = '8d12a961a1s2asda725dsa'
+        // return Promise.resolve(group)
     }
 
     public async getAll(filters: object): Promise<Array<Group>> {
