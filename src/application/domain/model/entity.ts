@@ -1,4 +1,3 @@
-  
 /**
  * Generic Entity
  * 

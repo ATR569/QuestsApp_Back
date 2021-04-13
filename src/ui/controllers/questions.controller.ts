@@ -2,6 +2,8 @@ import { Controller, Delete, Get, Post, Put } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
+import {questionService} from '@src/application/services/question.service'
+import { Question } from '@src/application/domain/model/question'
 
 @Controller('questions')
 export class QuestionsController {
@@ -14,7 +16,14 @@ export class QuestionsController {
      */
     @Post(':question_id/answer')
     public async saveAnswer(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.CREATED).send('Save Answer to the Question')
+        try {
+            const question = new Question().fromJSON(req.body).asNewEntity()
+            const result = await questionService.add(question)
+            return res.status(HttpStatus.CREATED).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
     
     /**
@@ -25,7 +34,13 @@ export class QuestionsController {
      */
     @Get(':question_id')
     public async getQuestionsById(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.OK).send('Get question by id')
+        try {
+            const result = await questionService.getById(req.params.question_id)
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -36,7 +51,13 @@ export class QuestionsController {
      */
     @Get(':question_id/answer')
     public async getAnswerByQuestionId(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.OK).send('Get answer by question id')
+        try {
+            const result = await questionService.getAllAnswers(req.params.question_id)
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     /**
@@ -46,8 +67,14 @@ export class QuestionsController {
      * @returns 
      */
     @Delete(':question_id')
-    public async deleteQuestionById(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.NO_CONTENT).send()
+    public async removeQuestionById(req: Request, res: Response): Promise<Response> {
+        try {
+            const result = await questionService.remove(req.params.question_id)
+            return res.status(HttpStatus.NO_CONTENT).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
 
