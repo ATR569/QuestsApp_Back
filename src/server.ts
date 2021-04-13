@@ -6,6 +6,7 @@ import { notFoundHandler } from './ui/exception/exception.handler'
 import * as http from 'http'
 
 import { GroupsController } from '@src/ui/controllers/groups.controller'
+import { QuestionnaireController } from '@src/ui/controllers/questionnaire.controller'
 
 export class SetupServer extends Server {
     private server?: http.Server
@@ -37,9 +38,12 @@ export class SetupServer extends Server {
 
     private setupControllers(): void {
         const groupsController = new GroupsController()
+        const questionnaireController = new QuestionnaireController()
+        
         // Add all controllers here
         const controllers: Array<object> = [
             groupsController,
+            questionnaireController
         ]
 
         this.addControllers(controllers)
