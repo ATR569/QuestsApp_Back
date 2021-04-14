@@ -5,7 +5,6 @@ import HttpStatus from 'http-status-codes'
 import { questionnairesService } from '@src/application/services/questionnaire.service'
 import { Questionnaire } from '@src/application/domain/model/questionnaire'
 import { Question } from '@src/application/domain/model/question'
-import { QuestionnaireValidator } from '@src/application/domain/validation/questionnaire.validator'
 
 @Controller('questionnaires')
 export class QuestionnaireController {
@@ -21,7 +20,6 @@ export class QuestionnaireController {
     public async saveQuestionnaire(req: Request, res: Response): Promise<Response> {
         try {
             const questionnaire = new Questionnaire().fromJSON(req.body).asNewEntity()
-            QuestionnaireValidator.validate(questionnaire)
             const result = await questionnairesService.add(questionnaire)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
@@ -79,7 +77,6 @@ export class QuestionnaireController {
         try {
             const questionnaire = new Questionnaire().fromJSON(req.body)
             questionnaire.id = req.params.questionnaire_id
-            QuestionnaireValidator.validate(questionnaire)
             const result = await questionnairesService.update(questionnaire)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {

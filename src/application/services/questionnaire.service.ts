@@ -1,12 +1,14 @@
 import { Question } from '../domain/model/question'
 import { Questionnaire } from '../domain/model/questionnaire'
 import { IService } from '../port/service.interface'
+import { QuestionnaireValidator } from '@src/application/domain/validation/questionnaire.validator'
+import { questionnairesRepository } from '@src/infrastructure/repository/questionnaires.repository'
 
 class QuestionnaireService implements IService<Questionnaire> {
 
     public async add(questionnaire: Questionnaire): Promise<Questionnaire> {
-        questionnaire.id = '507f1f77bcf86cd799439011'
-        return Promise.resolve(questionnaire)
+        QuestionnaireValidator.validate(questionnaire)
+        return questionnairesRepository.create(questionnaire)
     }
 
     public async addQuestion(questionnaire_id: string, question: Question): Promise<Question> {
@@ -15,19 +17,7 @@ class QuestionnaireService implements IService<Questionnaire> {
     }
 
     public async getAll(filters: object): Promise<Questionnaire[]> {
-        const createdQuestionnaire = {
-            id: '507f1f77bcf86cd799439011',
-            discipline: 'software educacional',
-            questions: [
-                { id: '507f1f77bcf86cd799439007', description: 'Q1', creator: 'thairam', answers: ['R1', 'R2'] }
-            ]
-        }
-
-        const questionnaires: Array<Questionnaire> = new Array(
-            new Questionnaire().fromJSON(createdQuestionnaire)
-        )
-
-        return Promise.resolve(questionnaires)
+        return questionnairesRepository.find(filters)
     }
 
     public async getAllQuestionsFromQuestionnaire(questionnaire_id: string): Promise<Question[]> {
@@ -43,23 +33,17 @@ class QuestionnaireService implements IService<Questionnaire> {
     }
 
     public async getById(id: string): Promise<Questionnaire> {
-        const createdQuestionnaire = {
-            id: '507f1f77bcf86cd799439011',
-            discipline: 'software educacional',
-            questions: [
-                { id: '507f1f77bcf86cd799439007', description: 'Q2', creator: 'thairam', answers: ['R1'] }
-            ]
-        }
-
-        return Promise.resolve(new Questionnaire().fromJSON(createdQuestionnaire))
+        return questionnairesRepository.findOne(id)
     }
 
-    public async update(item: Questionnaire): Promise<Questionnaire> {
-        return Promise.resolve(new Questionnaire().fromJSON(item.toJSON()))
+    public async update(questionnaire: Questionnaire): Promise<Questionnaire> {
+        questionnaire.questions = undefined
+        QuestionnaireValidator.validate(questionnaire)
+        return questionnairesRepository.update(questionnaire)
     }
 
     public async remove(id: string): Promise<Questionnaire> {
-        return Promise.resolve(new Questionnaire())
+        return questionnairesRepository.delete(id)
     }
 }
 
