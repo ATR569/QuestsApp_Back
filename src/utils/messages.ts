@@ -21,14 +21,14 @@ export abstract class Messages {
     public static readonly QUESTIONNAIRES: any = {
         
     }
-    
+
     public static readonly ANSWERS: any = {
 
-    }    
+    }
 
     public static readonly QUESTIONS: any = {
 
-    }        
+    }
 
     public static readonly ERROR_MESSAGE: any = {
         INTERNAL_SERVER_ERROR: 'Erro interno do servidor!',
@@ -37,7 +37,9 @@ export abstract class Messages {
         
         INVALID_ID: 'Formato de ID inválido!',
         INVALID_ID_DESC: 'O ID deve ter 24 dígitos em hexadecimal!',
-        INVALID_FIELDS: 'Um ou mais campos são inválidos...'
+        INVALID_FIELDS: 'Um ou mais campos são inválidos...',
+        MSG_NOT_FOUND: 'Recurso não encontrado',
+        DESC_NOT_FOUND: 'Não existe {recurso} de id {id}',
     }
 
 }

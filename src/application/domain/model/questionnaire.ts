@@ -1,37 +1,38 @@
 import { Entity } from './entity'
-import { IJSONTransformable } from './json.transformer.interface';
+import { IJSONTransformable } from './json.transformer.interface'
+import { Question } from './question'
 
 export class Questionnaire extends Entity implements IJSONTransformable<Questionnaire> {
-    private _disciplina?: string
-    private _questions?: Array<Object> // Array<Questions>
+    private _discipline?: string
+    private _questions?: Array<Question> // Array<Questions>
 
-    public get disciplina(): string | undefined {
-        return this._disciplina
+    public get discipline(): string | undefined {
+        return this._discipline
     }
 
-    public set disciplina(disciplina: string | undefined) {
-        this._disciplina = disciplina
+    public set discipline(discipline: string | undefined) {
+        this._discipline = discipline
     }
 
-    public get questions(): Array<Object> | undefined {
+    public get questions(): Array<Question> | undefined {
         return this._questions
     }
 
-    public set questions(questions: Array<Object> | undefined) {
+    public set questions(questions: Array<Question> | undefined) {
         this._questions = questions
     }
 
     public toJSON(): object {
         return {
             id: this.id,
-            disciplina: this.disciplina,
+            discipline: this.discipline,
             questions: this.questions
         }
     }
 
     public fromJSON(json: any): Questionnaire {
         if (json.id) this.id = json.id
-        if (json.disciplina) this.disciplina = json.disciplina
+        if (json.discipline) this.discipline = json.discipline
         if (json.questions) this.questions = json.questions
 
         return this
