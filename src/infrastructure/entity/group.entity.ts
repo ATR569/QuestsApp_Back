@@ -25,15 +25,15 @@ export class GroupEntityMapper implements IEntityMapper<Group, GroupEntity>{
 
         if (model.id !== undefined) result.id = model.id
         if (model.name !== undefined) result.name = model.name
-        // if (model.administrator !== undefined && model.administrator.id !== undefined)
-        //     result.administrator_id = model.administrator.id
+        if (model.administrator !== undefined && model.administrator.id !== undefined)
+            result.administrator_id = model.administrator.id
 
-        // if (model.members !== undefined) {
-        //     const members: Array<string> = []
-        //     model.members.forEach(member => { if (member.id != undefined) members.push(member.id) })
+        if (model.members !== undefined) {
+            const members: Array<string> = []
+            model.members.forEach(member => { if (member.id != undefined) members.push(member.id) })
 
-        //     result.members = members
-        // }
+            result.members = members
+        }
 
         if (model.questionnaires !== undefined) {
             const questionnaires: Array<string> = []
@@ -50,7 +50,8 @@ export class GroupEntityMapper implements IEntityMapper<Group, GroupEntity>{
 
         if (json.id) group.id = json.id
         if (json.name) group.name = json.name
-        if (json.administrator) group.administrator = new User().fromJSON(json.administrator)
+        //  TO DO
+        if (json.administrator_id) group.administrator = new User().fromJSON({id: json.administrator_id})
         if (json.members && json.members instanceof Array) 
             group.members = json.members.map((member: any) => new User().fromJSON(member))
         if (json.questionnaires && json.questionnaires instanceof Array) 

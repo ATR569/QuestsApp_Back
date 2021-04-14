@@ -21,8 +21,6 @@ export class GroupsController {
         try {
             const group = new Group().fromJSON(req.body).asNewEntity()
             
-            GroupValidator.validateCreate(group)
-
             const result = await groupsService.add(group)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {

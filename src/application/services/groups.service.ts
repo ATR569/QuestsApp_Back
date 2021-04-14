@@ -1,13 +1,23 @@
 import { Group } from '../domain/model/group';
 import { IService } from '../port/service.interface'
 import { groupsRepository } from '@src/infrastructure/repository/groups.repository'
+import { GroupValidator } from '../domain/validation/group.validator';
+import { ConflictException } from '../domain/exception/exceptions';
+import { Messages } from '@src/utils/messages';
 
 class GroupsService implements IService<Group> {
 
     public async add(group: Group): Promise<Group> {
-        return groupsRepository.create(group)
-        // group.id = '8d12a961a1s2asda725dsa'
-        // return Promise.resolve(group)
+        try {
+            GroupValidator.validateCreate(group)
+
+            if ((await groupsRepository.checkExist(group)))
+                throw new ConflictException(Messages.GROUPS.ALREADY_REGISTERED.replace('{0}', group.name))
+
+            return groupsRepository.create(group)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
     public async getAll(filters: object): Promise<Array<Group>> {
