@@ -10,7 +10,8 @@ export abstract class Messages {
     }
 
     public static readonly USERS: any = {
-
+        DUPLICATED: 'Recurso duplicado',
+        DUPLICATED_DESC: 'Já existe um usuário com este email cadastrado'
     }
 
     public static readonly GROUPS: any = {
