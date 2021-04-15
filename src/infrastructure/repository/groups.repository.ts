@@ -1,8 +1,8 @@
 import { Group } from '@src/application/domain/model/group'
 import { IRepository } from '@src/application/port/repository.interface'
-import { GroupEntity, GroupEntityMapper } from '../entity/group.entity'
+import { GroupEntityMapper } from '../entity/group.entity'
 import { GroupRepoModel } from '../database/schema/groups.schema'
-import { RepositoryException } from '@src/application/domain/exception/exceptions'
+import { NotFoundException, RepositoryException } from '@src/application/domain/exception/exceptions'
 import { Messages } from '@src/utils/messages'
 
 class GroupsRepository implements IRepository<Group> {
@@ -32,12 +32,18 @@ class GroupsRepository implements IRepository<Group> {
     public async findOne(id: string): Promise<Group> {
         return new Promise<Group>((resolve, reject) => {
             this._groupRepoModel.findOne({ _id: id })
+                .populate('questionnaires')
                 .then((result: any) => {
+                    if (!result) {
+                        return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'grupo').replace('{id}', id)))
+                    }
+
                     const group: any = this._groupEntityMapper.transform(result)
                     return resolve(group)
                 })
                 .catch((err: any) => {
-                    reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR))
+                    reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
                 })
         })
     }
@@ -55,7 +61,7 @@ class GroupsRepository implements IRepository<Group> {
     }
 
     public async checkExist(group: Group): Promise<boolean> {
-        const filters = {name: group.name}
+        const filters = { name: group.name }
 
         return new Promise<boolean>((resolve, reject) => {
             this._groupRepoModel.findOne(filters)

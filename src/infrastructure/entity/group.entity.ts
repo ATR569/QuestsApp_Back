@@ -1,4 +1,5 @@
 import { Group } from '@src/application/domain/model/group'
+import { Questionnaire } from '@src/application/domain/model/questionnaire'
 import { User } from '@src/application/domain/model/User'
 import { IEntityMapper } from './entity.mapper.interface'
 
@@ -52,10 +53,11 @@ export class GroupEntityMapper implements IEntityMapper<Group, GroupEntity>{
         if (json.name) group.name = json.name
         //  TO DO
         if (json.administrator_id) group.administrator = new User().fromJSON({id: json.administrator_id})
+        //  TO DO
         if (json.members && json.members instanceof Array) 
-            group.members = json.members.map((member: any) => new User().fromJSON(member))
+            group.members = json.members.map((member_id: any) => new User().fromJSON({id: member_id}))
         if (json.questionnaires && json.questionnaires instanceof Array) 
-            group.questionnaires = json.questionnaires.map((member: any) => new User().fromJSON(member))
+            group.questionnaires = json.questionnaires.map((quest: any) => new Questionnaire().fromJSON(quest))
 
         return group
     }

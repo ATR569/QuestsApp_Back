@@ -4,6 +4,7 @@ import { groupsRepository } from '@src/infrastructure/repository/groups.reposito
 import { GroupValidator } from '../domain/validation/group.validator';
 import { ConflictException } from '../domain/exception/exceptions';
 import { Messages } from '@src/utils/messages';
+import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 
 class GroupsService implements IService<Group> {
 
@@ -39,7 +40,9 @@ class GroupsService implements IService<Group> {
     }
 
     public async getById(group_id: string): Promise<Group> {
-        return Promise.reject(new Error('Method not implemented. Get group by id'))
+        ObjectIdValidator.validate(group_id)
+
+        return groupsRepository.findOne(group_id)
     }
 
     public async update(group: Group): Promise<Group> {

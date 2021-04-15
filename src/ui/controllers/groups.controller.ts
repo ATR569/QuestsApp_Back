@@ -20,6 +20,7 @@ export class GroupsController {
     public async saveGroup(req: Request, res: Response): Promise<Response> {
         try {
             const group = new Group().fromJSON(req.body).asNewEntity()
+            if (group.administrator !== undefined) group.members = [group.administrator]
             
             const result = await groupsService.add(group)
             return res.status(HttpStatus.CREATED).send(result)
