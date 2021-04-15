@@ -39,7 +39,7 @@ export class UsersController {
      * @param {Response} res 
      * @returns {User}
      */
-    @Get(':id')
+    @Get(':user_id')
     public async getUserById(req: Request, res: Response) {
         try {
             const result = await userService.getById(req.params.user_id)
@@ -102,10 +102,11 @@ export class UsersController {
      * @param {Response} res 
      * @returns {User}
      */
-    @Put(':id')
+    @Patch(':user_id')
     public async updateUser(req: Request, res: Response) {
         try {
             const user = new User().fromJSON(req.body)
+            user.id = req.params.user_id
 
             const result = await userService.update(user)
 
