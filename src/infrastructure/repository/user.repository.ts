@@ -34,7 +34,7 @@ class UsersRepository implements IRepository<User> {
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'user').replace('{id}, id')))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'user').replace('{id}', id)))
                     }
 
                     const user: any = this._userEntityMapper.transform(result)
@@ -51,7 +51,7 @@ class UsersRepository implements IRepository<User> {
                 .then((user: any) => {
                     if (!user) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'user').replace('{id}, id')))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'user').replace('{id}', user_id)))
                     }
 
                     if (user.password === old_password) {
@@ -82,7 +82,7 @@ class UsersRepository implements IRepository<User> {
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'user').replace('{id}, id')))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'user').replace('{id}', user.id)))
                     }
 
                     return resolve(this.findOne(result.id))
