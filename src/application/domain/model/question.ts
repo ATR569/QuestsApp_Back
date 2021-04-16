@@ -27,7 +27,7 @@ export class Question extends Entity implements IJSONTransformable<Question> {
     }
 
     set answers(answers: Array<object> | undefined) {
-        this.answers = answers
+        this._answers = answers
     }
     
     public toJSON(): object {
