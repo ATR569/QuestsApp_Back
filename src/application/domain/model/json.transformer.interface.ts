@@ -3,5 +3,5 @@
  */
 export interface IJSONTransformable<T> {
     toJSON(): object
-    fromJSON(json: object): T
+    fromJSON(json: any): T
 }
