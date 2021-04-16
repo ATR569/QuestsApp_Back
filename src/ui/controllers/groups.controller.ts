@@ -114,8 +114,8 @@ export class GroupsController {
     public async updateGroupById(req: Request, res: Response): Promise<Response> {
         try {
             const group = new Group().fromJSON(req.body)
-            GroupValidator.validateUpdate(group)
-            
+            group.id = req.params.id
+
             const result = await groupsService.update(group)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {

@@ -20,18 +20,31 @@ class GroupsRepository implements IRepository<Group> {
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => {
-                    reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR))
+                    return reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR))
                 })
         })
     }
 
-    public async find(filters: object): Promise<Group[]> {
-        throw new Error('Method not implemented.')
+    public async find(filters: object): Promise<Array<Group>> {
+        return new Promise<Array<Group>>((resolve, reject) => {
+            this._groupRepoModel.find(filters)
+                .populate('administrator')
+                .populate('members')
+                .populate('questionnaires')
+                .then((result: any) => {
+                    return resolve(result.map((item: any) => this._groupEntityMapper.transform(item)))
+                })
+                .catch((err: any) => {
+                    return reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
+                })
+        })
     }
 
     public async findOne(id: string): Promise<Group> {
         return new Promise<Group>((resolve, reject) => {
             this._groupRepoModel.findOne({ _id: id })
+                .populate('administrator')
+                .populate('members')
                 .populate('questionnaires')
                 .then((result: any) => {
                     if (!result) {
@@ -48,8 +61,18 @@ class GroupsRepository implements IRepository<Group> {
         })
     }
 
-    public async update(item: Group): Promise<Group> {
-        throw new Error('Method not implemented.')
+    public async update(group: Group): Promise<Group> {
+        const groupUpd = this._groupEntityMapper.transform(group)
+
+        return new Promise<Group>((resolve, reject) => {
+            this._groupRepoModel.findByIdAndUpdate(group.id, groupUpd)
+                .then((result: any) => {
+                    return resolve(this.findOne(result.id))
+                })
+                .catch((err: any) => {
+                    return reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
+                })
+            })
     }
 
     public async delete(id: string): Promise<Group> {
@@ -60,8 +83,7 @@ class GroupsRepository implements IRepository<Group> {
         throw new Error('Method not implemented.')
     }
 
-    public async checkExist(group: Group): Promise<boolean> {
-        const filters = { name: group.name }
+    public async checkExist(filters: object): Promise<boolean> {
 
         return new Promise<boolean>((resolve, reject) => {
             this._groupRepoModel.findOne(filters)

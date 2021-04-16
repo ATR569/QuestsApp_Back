@@ -52,11 +52,11 @@ export class Group extends Entity implements IJSONTransformable<Group> {
     }
 
     public fromJSON(json: any): Group {
-        if (json.id) this.id = json.id
-        if (json.name) this.name = json.name
-        if (json.administrator) this.administrator = json.administrator
-        if (json.members) this.members = json.members
-        if (json.questionnaires) this.questionnaires = json.questionnaires
+        if (json.id !== undefined) this.id = json.id
+        if (json.name !== undefined) this.name = json.name
+        if (json.administrator !== undefined) this.administrator = json.administrator
+        if (json.members !== undefined) this.members = json.members
+        if (json.questionnaires !== undefined) this.questionnaires = json.questionnaires
 
         return this
     }

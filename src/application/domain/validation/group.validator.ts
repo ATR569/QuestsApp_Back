@@ -34,18 +34,23 @@ export abstract class GroupValidator {
     }
 
     public static validateUpdate(group: Group): void | ValidationException {
-        const missingFields: Array<string> = []
+        const invalidFields: Array<string> = []
 
         try {
-            if (group.id === undefined) missingFields.push('id')
-            if (group.name === undefined) missingFields.push('name')
-            if (group.administrator === undefined) missingFields.push('administrator')
+            if (group.id !== undefined && group.id === '') invalidFields.push('id')
+            if (group.name !== undefined && group.name === '') invalidFields.push('name')
+            if (group.administrator !== undefined) {
+                if (group.administrator.id === undefined) {
+                    throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
+                        Messages.ERROR_MESSAGE.REQUIRED_FIELDS_DESC.replace('{0}', 'administrator.id'))
+                } else {
+                    ObjectIdValidator.validate(group.administrator.id)
+                }
+            }
 
-            if (missingFields.length > 0) {
-                throw new ValidationException(
-                    Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
-                    Messages.ERROR_MESSAGE.REQUIRED_FIELDS_DESC.replace('{0}', missingFields.join(', '))
-                )
+            if (invalidFields.length > 0) {
+                throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
+                    Messages.ERROR_MESSAGE.INVALID_FIELDS_DESC.replace('{0}', invalidFields.join(', ')))
             }
         } catch (err) {
             throw err

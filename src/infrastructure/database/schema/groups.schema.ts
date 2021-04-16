@@ -8,7 +8,7 @@ const groupSchema = new Schema(
             type: String,
             required: 'nome do grupo é obrigatório!'
         },
-        administrator_id: {
+        administrator: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },

@@ -6,7 +6,7 @@ import { IEntityMapper } from './entity.mapper.interface'
 export class GroupEntity {
     public id?: string
     public name?: string
-    public administrator_id?: string
+    public administrator?: string
     public members?: Array<string>
     public questionnaires?: Array<string>
 }
@@ -27,7 +27,7 @@ export class GroupEntityMapper implements IEntityMapper<Group, GroupEntity>{
         if (model.id !== undefined) result.id = model.id
         if (model.name !== undefined) result.name = model.name
         if (model.administrator !== undefined && model.administrator.id !== undefined)
-            result.administrator_id = model.administrator.id
+            result.administrator = model.administrator.id
 
         if (model.members !== undefined) {
             const members: Array<string> = []
@@ -52,10 +52,10 @@ export class GroupEntityMapper implements IEntityMapper<Group, GroupEntity>{
         if (json.id) group.id = json.id
         if (json.name) group.name = json.name
         //  TO DO
-        if (json.administrator_id) group.administrator = new User().fromJSON({id: json.administrator_id})
+        if (json.administrator) group.administrator = new User().fromJSON(json.administrator)
         //  TO DO
         if (json.members && json.members instanceof Array) 
-            group.members = json.members.map((member_id: any) => new User().fromJSON({id: member_id}))
+            group.members = json.members.map((member: any) => new User().fromJSON(member))
         if (json.questionnaires && json.questionnaires instanceof Array) 
             group.questionnaires = json.questionnaires.map((quest: any) => new Questionnaire().fromJSON(quest))
 
