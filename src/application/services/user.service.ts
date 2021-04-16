@@ -1,19 +1,25 @@
 import { IService } from '@src/application/port/service.interface'
-import { User } from '../domain/model/User'
+import { User } from '../domain/model/user'
 import { usersRepository } from '@src/infrastructure/repository/user.repository'
+import { UserValidator } from '../domain/validation/user.validator'
 import { ConflictException } from '../domain/exception/exceptions'
 import { Messages } from '@src/utils/messages'
+import { ObjectIdValidator } from '../domain/validation/object.id.validator'
 
 class UsersService implements IService<User> {
 
     public async add(user: User): Promise<User> {
+        try {
+            UserValidator.validateCreate(user)
 
-        if ((await usersRepository.checkExist(user))) {
-            throw new ConflictException(Messages.USERS.DUPLICATED)
-        }
+            if ((await usersRepository.checkExist({ email: user.email }))) {
+                throw new ConflictException(Messages.USERS.DUPLICATED, Messages.USERS.DUPLICATED_DESC)
+            }
             
-
-        return usersRepository.create(user)
+            return usersRepository.create(user)
+        } catch (error) {
+            return Promise.reject(error)
+        }
     }
 
     public async getAll(filters: object): Promise<Array<User>> {
@@ -21,10 +27,19 @@ class UsersService implements IService<User> {
     }
 
     public async getById(id: string): Promise<User> {
+        ObjectIdValidator.validate(id)
+
         return usersRepository.findOne(id)
     }
+
     public async update(user: User): Promise<User> {
-        return usersRepository.update(user)
+        try {
+            UserValidator.validateUpdate(user)
+
+            return usersRepository.update(user)
+        } catch (error) {
+            return Promise.reject(error)
+        }
     }
     public async remove(id: string): Promise<User> {
         return Promise.reject(new Error('Method not implemented. Remove user by id'))
@@ -38,8 +53,14 @@ class UsersService implements IService<User> {
         return Promise.reject(new Error('Method not implemented. Get all user groups'))
     }
 
-    public async updatePassword(new_password: string): Promise<String> {
-        return Promise.reject(new Error('Method not implemented. Update password'))
+    public async updatePassword(user_id: string, old_password: string, new_password: string): Promise<boolean> {
+        try {
+            UserValidator.validateChangePassword(user_id, old_password, new_password)
+
+            return usersRepository.updatePassword(user_id, old_password, new_password)
+        } catch (error) {
+            return Promise.reject(error)
+        }
     }
 }
 
