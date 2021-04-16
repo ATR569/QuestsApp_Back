@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Post, Put } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
-import { User } from '@src/application/domain/model/User'
+import { User } from '@src/application/domain/model/user'
 import { userService } from '@src/application/services/user.service'
 
 @Controller('users')
@@ -105,9 +105,10 @@ export class UsersController {
     @Patch(':user_id')
     public async updateUser(req: Request, res: Response) {
         try {
-            const user = new User().fromJSON(req.body)
-            user.id = req.params.user_id
+            const user = new User().fromJSON(req.body).asNewEntity()
 
+            user.id = req.params.user_id
+            
             const result = await userService.update(user)
 
             return res.status(HttpStatus.OK).send(result)
@@ -126,12 +127,14 @@ export class UsersController {
      * @param {Response} res 
      * @returns {}
      */
-    @Patch(':id/password')
+    @Patch(':user_id/password')
     public async updatePassword(req: Request, res: Response) {
         try {
-            const new_password = req.body
+            const new_password = req.body.new_password
+            const old_password = req.body.old_password
+            const user_id = req.params.user_id
             
-            const result = await userService.updatePassword(new_password)
+            const result = await userService.updatePassword(user_id, old_password, new_password)
 
             return res.status(HttpStatus.OK).send(result)
         } catch (error) {

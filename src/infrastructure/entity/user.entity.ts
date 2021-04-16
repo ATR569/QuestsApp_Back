@@ -1,4 +1,4 @@
-import { User } from '@src/application/domain/model/User'
+import { User } from '@src/application/domain/model/user'
 import { IEntityMapper } from './entity.mapper.interface'
 
 export class UserEntity {
