@@ -49,11 +49,10 @@ export class User extends Entity implements IJSONTransformable<User> {
         }
     }
     fromJSON(json: any): User {
-        if (json.id) this.id = json.id
-        if (json.name) this.name = json.name
-        if (json.email) this.email = json.email
-        if (json.password) this.password = json.password
-        if (json.institution) this.institution = json.institution
+        if (json.id !== undefined) this.id = json.id
+        if (json.name !== undefined) this.name = json.name
+        if (json.email !== undefined) this.email = json.email
+        if (json.institution !== undefined) this.institution = json.institution
 
         return this
     }

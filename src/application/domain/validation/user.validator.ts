@@ -9,10 +9,10 @@ export abstract class UserValidator {
         const missingFields: Array<string> = []
 
         try {
-            if (user.name === undefined) missingFields.push('name')
-            if (user.email === undefined) missingFields.push('email')
-            if (user.password === undefined) missingFields.push('password')
-            if (user.institution === undefined) missingFields.push('institution')
+            if (!user.name) missingFields.push('name')
+            if (!user.email) missingFields.push('email')
+            if (!user.password) missingFields.push('password')
+            if (!user.institution) missingFields.push('institution')
 
             if (missingFields.length > 0) {
                 throw new ValidationException(
@@ -26,28 +26,43 @@ export abstract class UserValidator {
     }
 
     public static validateUpdate(user: User): void | ValidationException {
-        const missingFields: Array<string> = []
+        const invalidFields: Array<string> = []
+        let userIsEmpty: boolean = true
 
         try {
-            if (user.id != undefined) {
+            if (user.id !== undefined) {
                 ObjectIdValidator.validate(user.id)
             }
 
-            if (user.password != undefined) {
+            if (user.password !== undefined) {
                 throw new ValidationException(
                     Messages.USERS.PASSWORD_NOT_REQUIRED,
                     Messages.USERS.PASSWORD_NOT_REQUIRED_DESC
                 )
             }
 
-            if (user.name === undefined && user.email === undefined && user.institution === undefined) {
-                missingFields.push('name', 'email', 'institution')
-            }
+            if (user.name !== undefined) {
+                userIsEmpty = false
+                if (user.name === '') invalidFields.push('name')
+            } 
+            if (user.email !== undefined) {
+                userIsEmpty = false
+                if (user.email === '') invalidFields.push('email')
+            } 
+            if (user.institution !== undefined) {
+                userIsEmpty = false
+                if (user.institution === '') invalidFields.push('institution')
+            } 
 
-            if (missingFields.length > 0) {
+            if (userIsEmpty) {
                 throw new ValidationException(
                     Messages.USERS.ALL_MISSING_FIELDS,
-                    Messages.USERS.ALL_MISSING_FIELDS_DESC.replace('{0}', missingFields.join(', '))
+                    Messages.USERS.ALL_MISSING_FIELDS_DESC
+                )
+            } else if (invalidFields.length > 0) {
+                throw new ValidationException(
+                    Messages.ERROR_MESSAGE.INVALID_FIELDS,
+                    Messages.ERROR_MESSAGE.INVALID_FIELDS_DESC.replace('{0}', invalidFields.join(', '))
                 )
             }
 
