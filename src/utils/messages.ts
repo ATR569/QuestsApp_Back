@@ -28,6 +28,10 @@ export abstract class Messages {
 
     public static readonly QUESTIONS: any = {
 
+        CREATOR_ID_NOT_PROVIDED: 'O id do criador da questão não foi fornecido!',
+        CREATOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
+        ALREADY_REGISTERED: 'Já existe uma questão registrada com a descrição fornecida: {{0}}.'
+
     }
 
     public static readonly ERROR_MESSAGE: any = {

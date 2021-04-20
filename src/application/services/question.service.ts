@@ -1,41 +1,47 @@
-import { IService } from '@src/application/port/service.interface';
 import { Question } from '../domain/model/question';
+import { IService } from '@src/application/port/service.interface';
+import { questionsRepository } from '@src/infrastructure/repository/questions.repository'
+import { usersRepository } from '@src/infrastructure/repository/user.repository'
+import { QuestionValidator } from '../domain/validation/question.validator';
+import { ConflictException, NotFoundException } from '../domain/exception/exceptions';
+import { Messages } from '@src/utils/messages';
+import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 
 
 export class QuestionService implements IService<Question> {
 
     public async add(question: Question): Promise<Question> {
-        question.id = '507f1f77bcf86cd799439011'
-        return Promise.resolve(question)
+        try {
+            QuestionValidator.validateCreate(question)
+
+            if ((await questionsRepository.checkExist({description: question.description })))
+                throw new ConflictException(Messages.QUESTIONS.ALREADY_REGISTERED.replace('{0}', question.description))
+            
+                //  Check if the user is registered
+            if (question.creator !== undefined && question.creator.id !== undefined) {
+                if (!(await usersRepository.checkExist({ _id: question.creator.id })))
+                    throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                        Messages.QUESTIONS.CREATOR_ID_NOT_REGISTERED)
+            }            
+            //Creates the question
+            return questionsRepository.create(question)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
+
     public async getAll(filters: object): Promise<Question[]> {
-        const createdQuestion = {
-            id: '507f1f77bcf86cd799439011',
-            description: 'Q1',
-            creator: 'Jardesson',
-            answers: [
-                { id: '507f1f77bcf86cd799439007', usuario: 'Jardesson', descricao: 'R1', likes: 1, visivel: true, listaDiscussao: ['coment1', 'coment2'] }
-            ]
+         try {
+            return questionsRepository.find(filters)
+        } catch (err) {
+            return Promise.reject(err)
         }
-
-        const questions: Array<Question> = new Array(
-            new Question().fromJSON(createdQuestion)
-        )
-
-        return Promise.resolve(questions)
     }
 
-    public async getById(id: string): Promise<Question> {
-        const createdQuestion = {
-            id: '507f1f77bcf86cd799439011',
-            description: 'Q1',
-            creator: 'Jardesson',
-            answers: [
-                { id: '507f1f77bcf86cd799439007', usuario: 'Jardesson', descricao: 'R1', likes: 1, visivel: true, listaDiscussao: ['coment1', 'coment2'] }
-            ]
-        }
+    public async getById(question_id: string): Promise<Question> {
+        ObjectIdValidator.validate(question_id)
 
-        return Promise.resolve(new Question().fromJSON(createdQuestion))
+        return questionsRepository.findOne(question_id)
     }
 
     public async update(item: Question): Promise<Question> {
