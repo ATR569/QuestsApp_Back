@@ -1,10 +1,10 @@
-import { Controller, Delete, Get, Post, Put } from '@overnightjs/core'
+import { Controller, Delete, Get, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
 import {questionService} from '@src/application/services/question.service'
 import { Question } from '@src/application/domain/model/question'
-import { QuestionValidator } from '@src/application/domain/validation/question.validator'
+
 
 @Controller('questions')
 export class QuestionsController {
@@ -19,7 +19,7 @@ export class QuestionsController {
     public async saveAnswer(req: Request, res: Response): Promise<Response> {
         try {
             const question = new Question().fromJSON(req.body).asNewEntity()
-            QuestionValidator.validateCreate(question)
+
             const result = await questionService.add(question)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
