@@ -2,21 +2,22 @@ import { Controller, Delete, Get, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
-import {questionService} from '@src/application/services/question.service'
+import { questionService } from '@src/application/services/question.service'
 import { Question } from '@src/application/domain/model/question'
+import { Answer } from '@src/application/domain/model/answer'
 
 
 @Controller('questions')
 export class QuestionsController {
 
     /**
-     * Creates a new answer to the question
-     * @param req 
-     * @param res 
-     * @returns 
-     */
-    @Post(':question_id/answer')
-    public async saveAnswer(req: Request, res: Response): Promise<Response> {
+    * Creates a new question
+    * @param req 
+    * @param res 
+    * @returns 
+    */
+    @Post('')
+    public async saveQuestion(req: Request, res: Response): Promise<Response> {
         try {
             const question = new Question().fromJSON(req.body).asNewEntity()
 
@@ -27,7 +28,18 @@ export class QuestionsController {
             return res.status(apiException.code).send(apiException)
         }
     }
-    
+
+    /**
+     * Creates a new answer to the question
+     * @param req 
+     * @param res 
+     * @returns 
+     */
+    @Post(':question_id/answer')
+    public async saveAnswer(req: Request, res: Response): Promise<Response> {
+        return Promise.reject(new Error('Method not implemented. creates a answer by question id'))
+    }
+
     /**
      * Get question by id
      * @param req 

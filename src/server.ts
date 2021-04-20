@@ -8,7 +8,9 @@ import * as http from 'http'
 import { GroupsController } from '@src/ui/controllers/groups.controller'
 import { UsersController } from '@src/ui/controllers/user.controller'
 import { QuestionnaireController } from '@src/ui/controllers/questionnaire.controller'
+import { QuestionsController } from './ui/controllers/questions.controller'
 import { MongoDB } from './infrastructure/database/mongo.db'
+
 
 export class SetupServer extends Server {
     
@@ -44,12 +46,14 @@ export class SetupServer extends Server {
         const groupsController = new GroupsController()
         const questionnaireController = new QuestionnaireController()
         const usersController = new UsersController()
+        const questionsController = new QuestionsController()
         
         // Add all controllers here
         const controllers: Array<object> = [
             groupsController,
             questionnaireController,
-            usersController
+            usersController,
+            questionsController
         ]
 
         this.addControllers(controllers)

@@ -12,7 +12,7 @@ class QuestionsRepository implements IRepository<Question> {
     ) { }
 
     public async create(question: Question): Promise<Question> {
-        const newQuestion = this._questionEntityMapper.transform(Question)
+        const newQuestion = this._questionEntityMapper.transform(question)
 
         return new Promise<Question>((resolve, reject) => {
             this._questionRepoModel.create(newQuestion)
@@ -64,7 +64,13 @@ class QuestionsRepository implements IRepository<Question> {
     }
 
     public async delete(id: string): Promise<Question> {
-        throw new Error('Method not implemented.')
+        return new Promise<Question>((resolve, reject) => {
+            this._questionRepoModel.findOneAndDelete({ _id: id })
+                .then((result: any) => {
+                    return resolve(new Question())
+                })
+                .catch((err: any) => reject(err))
+        })
     }
 
     public async count(filters: object): Promise<number> {

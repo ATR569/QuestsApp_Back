@@ -8,7 +8,7 @@ import { Messages } from '@src/utils/messages';
 import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 
 
-export class QuestionService implements IService<Question> {
+class QuestionService implements IService<Question> {
 
     public async add(question: Question): Promise<Question> {
         try {
@@ -45,11 +45,11 @@ export class QuestionService implements IService<Question> {
     }
 
     public async update(item: Question): Promise<Question> {
-        return Promise.reject(new Error('Method not implemented. Update questionnaire by id'))
+        return Promise.reject(new Error('Method not implemented.'))
     }
     
     public async remove(id: string): Promise<Question> {
-        return Promise.resolve(new Question())
+        return questionsRepository.delete(id)
     }
 
     public async getAllAnswers(group_id: string): Promise<Array<object>> {

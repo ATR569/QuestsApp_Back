@@ -6,7 +6,7 @@ import { User } from './User'
 export class Question extends Entity implements IJSONTransformable<Question> {
     private _description?: string
     private _creator?: User
-    private _answers?: Array<Answer> // Array<Answer>
+    private _answers?: Array<Answer>
 
     get description() : string | undefined{
         return this._description

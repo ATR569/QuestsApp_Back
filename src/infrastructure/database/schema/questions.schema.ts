@@ -6,15 +6,15 @@ const questionSchema = new Schema(
     {
         description: {
             type: String,
-            required: 'A descirção da perguta é obrigatória!'
+            required: 'A descrição da pergunta é obrigatória!'
         },
         creator: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
         answers: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Answers'
+            type: Schema.Types.ObjectId
+            /*ref: 'Answer'*/
         }]
     },
     {
