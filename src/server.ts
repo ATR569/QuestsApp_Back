@@ -13,10 +13,13 @@ import { MongoDB } from './infrastructure/database/mongo.db'
 
 
 export class SetupServer extends Server {
-    
+    private readonly database = new MongoDB()
     private server?: http.Server
 
-    constructor(private port = 3000, private readonly database = new MongoDB()) {
+    constructor(
+        private port: any = 3000, 
+        private mongoUri: string = 'mongodb://localhost:27017/questsapp'
+    ){
         super()
     }
 
@@ -60,7 +63,7 @@ export class SetupServer extends Server {
     }
 
     private async setupDatabase(): Promise<void> {
-        await this.database.connect('mongodb://localhost:27017/questsapp')
+        await this.database.connect(this.mongoUri)
     }
 
     public getApp(): Application {
