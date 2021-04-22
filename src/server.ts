@@ -15,12 +15,13 @@ import { MongoDB } from './infrastructure/database/mongo.db'
 export class SetupServer extends Server {
     private readonly database = new MongoDB()
     private server?: http.Server
+    private mongoUri: string
+    private port: any
 
-    constructor(
-        private port: any = 3000, 
-        private mongoUri: string = 'mongodb://localhost:27017/questsapp'
-    ){
+    constructor(port: any,  mongoUri: string ){
         super()
+        this.mongoUri = mongoUri
+        this.port = port
     }
 
     public init(): void {
