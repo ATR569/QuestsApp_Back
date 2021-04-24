@@ -10,7 +10,7 @@ import { UsersController } from '@src/ui/controllers/user.controller'
 import { QuestionnaireController } from '@src/ui/controllers/questionnaire.controller'
 import { QuestionsController } from './ui/controllers/questions.controller'
 import { MongoDB } from './infrastructure/database/mongo.db'
-
+import cors from 'cors'
 
 export class SetupServer extends Server {
     private readonly database = new MongoDB()
@@ -44,6 +44,7 @@ export class SetupServer extends Server {
 
     private setupExpress(): void {
         this.app.use(bodyParser.json())
+        this.app.use(cors({origin: '*'}))
     }
 
     private setupControllers(): void {
