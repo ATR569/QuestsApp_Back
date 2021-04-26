@@ -56,6 +56,7 @@ export abstract class Messages {
         INVALID_FIELDS_DESC: 'Os campos: [{0}] são vazios ou inválidos!',
         MSG_NOT_FOUND: 'Recurso não encontrado',
         DESC_NOT_FOUND: 'Não existe {recurso} de id {id}',
+        EMPTY_STRING: 'O campo {0} deve ter pelo menos um caracter.',
     }
 
 }

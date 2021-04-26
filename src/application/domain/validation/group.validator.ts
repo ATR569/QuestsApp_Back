@@ -2,6 +2,7 @@ import { ValidationException } from '../exception/exceptions'
 import { Group } from '../model/group'
 import { Messages } from '@src/utils/messages'
 import { ObjectIdValidator } from './object.id.validator'
+import { StringValidator } from './string.validator'
 
 export abstract class GroupValidator {
 
@@ -10,6 +11,8 @@ export abstract class GroupValidator {
 
         try {
             if (group.name === undefined) missingFields.push('name')
+            else StringValidator.validate(group.name, 'name')
+
             if (group.administrator === undefined) {
                 missingFields.push('administrator')
             } else if (group.administrator.id === undefined) {
