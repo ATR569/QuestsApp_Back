@@ -30,7 +30,8 @@ export abstract class Messages {
     }    
     
     public static readonly QUESTIONNAIRES: any = {
-        
+        ALREADY_REGISTERED: 'Já existe um questionário registrado com a disciplina: {{0}}.',
+        ALREADY_REGISTERED_QUESTION: 'Já existe um questão registrada para o questionário {{0}} com a descrição: {{1}}.'
     }
 
     public static readonly ANSWERS: any = {

@@ -4,7 +4,7 @@ import { Question } from './question'
 
 export class Questionnaire extends Entity implements IJSONTransformable<Questionnaire> {
     private _discipline?: string
-    private _questions?: Array<Question> // Array<Questions>
+    private _questions?: Array<Question>
 
     public get discipline(): string | undefined {
         return this._discipline
@@ -31,9 +31,9 @@ export class Questionnaire extends Entity implements IJSONTransformable<Question
     }
 
     public fromJSON(json: any): Questionnaire {
-        if (json.id) this.id = json.id
-        if (json.discipline) this.discipline = json.discipline
-        if (json.questions) this.questions = json.questions
+        if (json.id !== undefined) this.id = json.id
+        if (json.discipline !== undefined) this.discipline = json.discipline
+        if (json.questions !== undefined) this.questions = json.questions
 
         return this
     }
