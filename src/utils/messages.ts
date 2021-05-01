@@ -26,6 +26,7 @@ export abstract class Messages {
     public static readonly GROUPS: any = {
         ADMIN_ID_NOT_PROVIDED: 'O id do administrador do grupo não foi fornecido!',
         ADMIN_ID_NOT_REGISTERED: 'O id fornecido para o administrador do grupo não está registrado no sistema!',
+        INVALID_ADMINISTRATOR_ID: 'O id do administrador não é válido.',
         ALREADY_REGISTERED: 'Já existe um grupo registrado com o nome fornecido: { {0} }.',
         FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.'
     }    
@@ -58,7 +59,7 @@ export abstract class Messages {
         INVALID_FIELDS_DESC: 'Os campos: { {0} } são vazios ou inválidos!',
         MSG_NOT_FOUND: 'Recurso não encontrado',
         DESC_NOT_FOUND: 'Não existe { recurso } de id { id }',
-        EMPTY_STRING: 'O campo { 0 } deve ter pelo menos um caracter.',
+        EMPTY_STRING: 'O campo { {0} } deve ter pelo menos um caracter.',
     }
 
 }

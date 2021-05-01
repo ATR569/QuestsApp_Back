@@ -9,10 +9,13 @@ export class ApiException extends Exception {
     }
 
     public toJSON(): object {
-        return {
+        return this.description ? {
             code: this.code,
             message: this.message,
             description: this.description
+        } : {
+            code: this.code,
+            message: this.message,
         }
     }
 }

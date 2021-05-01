@@ -8,6 +8,8 @@ export class Group extends Entity implements IJSONTransformable<Group> {
     private _administrator?: User 
     private _members?: Array<User> 
     private _questionnaires?: Array<Questionnaire> 
+    private _membersCount?: number
+    private _questionnairesCount?: number
 
     get name() : string | undefined{
         return this._name
@@ -41,13 +43,35 @@ export class Group extends Entity implements IJSONTransformable<Group> {
         this._questionnaires = questionnaires
     }
     
+    get membersCount(): number | undefined {
+        return this._membersCount
+    }
+
+    set membersCount(membersCount: number | undefined) {
+        this._membersCount = membersCount
+    }
+
+    get questionnairesCount(): number | undefined {
+        return this._questionnairesCount
+    }
+    
+    set questionnairesCount(questionnairesCount: number | undefined) {
+        this._questionnairesCount = questionnairesCount
+    }
+    
     public toJSON(): object {
-        return {
+        return (this.questionnaires || this.members) ? {
             id: this.id,
             name: this.name,
             administrator: this.administrator,
             members: this.members,
             questionnaires: this.questionnaires
+        } : {
+            id: this.id,
+            name: this.name,
+            administrator: this.administrator,
+            membersCount: this.membersCount,
+            questionnairesCount: this.questionnairesCount
         }
     }
 

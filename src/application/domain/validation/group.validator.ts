@@ -22,8 +22,8 @@ export abstract class GroupValidator {
                 try {
                     ObjectIdValidator.validate(group.administrator.id)
                 } catch (err) {
-                    throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
-                        Messages.ERROR_MESSAGE.INVALID_ID)
+                    throw new ValidationException(Messages.GROUPS.INVALID_ADMINISTRATOR_ID,
+                        Messages.ERROR_MESSAGE.INVALID_ID_DESC)
                 }
             }
 

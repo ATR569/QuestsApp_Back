@@ -9,7 +9,7 @@
     "start": "node ./dist/index.js",
     "test": "nyc --clean --all --reporter=text-summary mocha test/**/*.spec.ts || exit 0",
     "test:unit": "nyc --clean --all --reporter=text-summary mocha test/unit/**/*.spec.ts || exit 0",
-    "test:integration": "nyc --clean --all --reporter=text-summary mocha test/integration/**/*.spec.ts  || exit 0"
+    "test:integration": "nyc --clean --all --reporter=text-summary mocha test/integration/**/*.spec.ts"
   },
   "keywords": [
     "QuestsApp",
@@ -27,6 +27,7 @@
     "@types/module-alias": "^2.0.0",
     "@types/mongoose": "^5.10.4",
     "@types/node": "^14.14.37",
+    "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "chai": "^4.3.4",
     "eslint": "^6.8.0",

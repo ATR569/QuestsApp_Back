@@ -29,9 +29,8 @@ class GroupsRepository implements IRepository<Group> {
         return new Promise<Array<Group>>((resolve, reject) => {
             this._groupRepoModel.find(filters)
                 .populate('administrator')
-                .populate('members')
-                .populate('questionnaires')
                 .then((result: any) => {
+                    console.log(result)
                     return resolve(result.map((item: any) => this._groupEntityMapper.transform(item)))
                 })
                 .catch((err: any) => {
