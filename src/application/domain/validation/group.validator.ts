@@ -51,6 +51,16 @@ export abstract class GroupValidator {
                 }
             }
 
+            if (group.members !== undefined) {
+                throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS, 
+                    Messages.GROUPS.FIELD_CANT_UPDATED.replace('{0}', 'members'))
+            }
+
+            if (group.questionnaires !== undefined) {
+                throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS, 
+                    Messages.GROUPS.FIELD_CANT_UPDATED.replace('{0}', 'questionnaires'))
+            }
+
             if (invalidFields.length > 0) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                     Messages.ERROR_MESSAGE.INVALID_FIELDS_DESC.replace('{0}', invalidFields.join(', ')))
