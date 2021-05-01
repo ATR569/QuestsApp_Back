@@ -68,11 +68,13 @@ class GroupsService implements IService<Group> {
     }
 
     public async remove(group_id: string): Promise<Group> {
-        return Promise.reject(new Error('Method not implemented. Remove group'))
-    }
+        try{
+            ObjectIdValidator.validate(group_id)
 
-    public async getAllQuestionnaires(group_id: string): Promise<Array<object>> {
-        return Promise.reject(new Error('Method not implemented. Get all questionnaires from group'))
+            return groupsRepository.delete(group_id)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
 }

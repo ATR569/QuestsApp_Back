@@ -76,7 +76,15 @@ class GroupsRepository implements IRepository<Group> {
     }
 
     public async delete(id: string): Promise<Group> {
-        throw new Error('Method not implemented.')
+        return new Promise<Group>((resolve, reject) => {
+            this._groupRepoModel.findOneAndDelete({ _id: id })
+                .then((result: any) => {
+                    return resolve(new Group())
+                })
+                .catch((err: any) => {
+                    reject(err)
+                })
+        })
     }
 
     public async count(filters: object): Promise<number> {
@@ -87,7 +95,6 @@ class GroupsRepository implements IRepository<Group> {
 
         return new Promise<boolean>((resolve, reject) => {
             this._groupRepoModel.findOne(filters)
-                // .then((result: any) => console.log(result))
                 .then((result: any) => resolve(!!result))
                 .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
         })
