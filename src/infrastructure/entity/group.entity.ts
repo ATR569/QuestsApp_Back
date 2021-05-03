@@ -9,6 +9,8 @@ export class GroupEntity {
     public administrator?: string
     public members?: Array<string>
     public questionnaires?: Array<string>
+    public questionnaires_count?: number
+    public members_count?: number
 }
 
 /**
@@ -51,14 +53,13 @@ export class GroupEntityMapper implements IEntityMapper<Group, GroupEntity>{
 
         if (json.id) group.id = json.id
         if (json.name) group.name = json.name
-        //  TO DO
         if (json.administrator) group.administrator = new User().fromJSON(json.administrator)
-        //  TO DO
-        if (json.members && json.members instanceof Array) 
+        if (json.members && json.members instanceof Array)
             group.members = json.members.map((member: any) => new User().fromJSON(member))
-        if (json.questionnaires && json.questionnaires instanceof Array) 
+        if (json.questionnaires && json.questionnaires instanceof Array)
             group.questionnaires = json.questionnaires.map((quest: any) => new Questionnaire().fromJSON(quest))
-
+        if (json.members_count != undefined) group.membersCount = json.members_count
+        if (json.questionnaires_count != undefined) group.questionnairesCount = json.questionnaires_count
         return group
     }
 
