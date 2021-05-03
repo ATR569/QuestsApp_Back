@@ -101,7 +101,6 @@ class QuestionnaireRepository implements IRepository<Questionnaire> {
     }
 
     public async count(filters: object): Promise<number> {
-        //TODO
         return this._questionnaireRepoModel.count()
     }
 

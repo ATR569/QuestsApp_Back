@@ -9,7 +9,6 @@ import HttpStatus from 'http-status-codes'
 import { expect } from 'chai'
 import { ExceptionsMock } from '../../mocks/exceptions.mock'
 import { ObjectID } from 'bson'
-import { questionnairesRepository } from '@src/infrastructure/repository/questionnaires.repository'
 
 
 describe('Routes: Groups', () => {
@@ -20,6 +19,7 @@ describe('Routes: Groups', () => {
     const group = new GroupMock()
     const user = new UserMock()
     group.administrator = user
+    group.members = [user]
 
     before(async () => {
         try {
@@ -219,8 +219,8 @@ describe('Routes: Groups', () => {
                         expect(res.body[0]).to.haveOwnProperty('id', group.id)
                         expect(res.body[0]).to.haveOwnProperty('name', group.name)
                         expect(res.body[0]).to.haveOwnProperty('administrator')
-                        expect(res.body[0]).to.haveOwnProperty('members')
-                        expect(res.body[0]).to.haveOwnProperty('questionnaires')
+                        expect(res.body[0]).to.haveOwnProperty('membersCount', 1)
+                        expect(res.body[0]).to.haveOwnProperty('questionnairesCount', 0)
 
                         expect(res.body[0].administrator).to.haveOwnProperty('id', user.id)
                         expect(res.body[0].administrator).to.haveOwnProperty('name', user.name)
@@ -263,7 +263,7 @@ describe('Routes: Groups', () => {
             }
         })
 
-        context('When get the a group successfully.', () => {
+        context('When get the group successfully.', () => {
             it('groups.get_id001: should return status 200 and the group.', () => {
                 return request.get(`${URI}/${group.id}`)
                     .set('Content-Type', 'application/json')
@@ -297,10 +297,75 @@ describe('Routes: Groups', () => {
         })
 
         context('When the group_id is invalid.', () => {
-            it('groups.get_id003: should return status 404 for group not found.', () => {
-                const INEXISTENT_ID = '111111111111111111111111'
+            it('groups.get_id003: should return status 400 for invalid group id.', () => {
+                const INVALID_ID = '12345'
 
-                return request.get(`${URI}/${INEXISTENT_ID}`)
+                return request.get(`${URI}/${INVALID_ID}`)
+                    .set('Content-Type', 'application/json')
+                    .expect(HttpStatus.BAD_REQUEST)
+                    .then(res => {
+                        expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_GROUP_ID)
+                    })
+            })
+        })
+    })
+
+    describe('PATCH /groups/:{group_id}', () => {
+        beforeEach(async () => {
+            try {
+                await UsersDBUtils.saveUser(user.toJSON())
+                    .then(res => user.id = res.id)
+                await GroupsDBUtils.saveGroup(group.toJSON())
+                    .then(res => group.id = res.id)
+            } catch (err) {
+                console.log('Failure on before tests for PATCH /groups/:{group_id}', err.message)
+            }
+        })
+
+        afterEach(async () => {
+            try {
+                await UsersDBUtils.removeAllUsers()
+                await GroupsDBUtils.removeAllGroups()
+            } catch (err) {
+                console.log('Failure on afterEach tests for PATCH /groups/:{group_id', err.message)
+            }
+        })
+
+        context('When update the group successfully.', () => {
+            it('groups.patch001: should return status 200 and the updated group.', () => {
+                const updatedGroup = {
+                    id: group.id,
+                    name: 'updated group',
+                    administrator: {
+                        id: group.administrator?.id
+                    }
+                }
+
+                return request.patch(`${URI}/${updatedGroup.id}`)
+                    .send(updatedGroup)
+                    .set('Content-Type', 'application/json')
+                    .expect(HttpStatus.OK)
+                    .then(res => {
+                        expect(res.body).to.haveOwnProperty('id', group.id)
+                        expect(res.body).to.haveOwnProperty('name', updatedGroup.name)
+                        expect(res.body).to.haveOwnProperty('administrator')
+                        expect(res.body).to.haveOwnProperty('members')
+                        expect(res.body).to.haveOwnProperty('questionnaires')
+
+                        expect(res.body.administrator).to.haveOwnProperty('id', user.id)
+                        expect(res.body.administrator).to.haveOwnProperty('name', user.name)
+                        expect(res.body.administrator).to.haveOwnProperty('email', user.email)
+                        expect(res.body.administrator).to.haveOwnProperty('institution', user.institution)
+                    })
+            })
+        })
+
+        context('When the group not found.', () => {
+            it('groups.patch002: should return status 404 for group not found.', () => {
+                const NON_EXISTENT_ID = new ObjectID().toHexString()
+
+                return request.patch(`${URI}/${NON_EXISTENT_ID}`)
+                    .send({ name: 'updated name' })
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.NOT_FOUND)
                     .then(res => {
@@ -308,48 +373,102 @@ describe('Routes: Groups', () => {
                     })
             })
         })
+
+        describe('When a validation error ocurrs.', () => {
+            context('When the group id is invalid.', () => {
+                it('groups.patch003: should return status 400 and an error for invalid id.', () => {
+                    const INVALID_ID = '123456'
+
+                    return request.patch(`${URI}/${INVALID_ID}`)
+                        .send({ name: 'updated name' })
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_GROUP_ID)
+                        })
+                })
+            })
+
+            context('When invalid fields are provided.', () => {
+                it('groups.patch004: should return status 400 and an error for empty name.', () => {
+                    return request.patch(`${URI}/${group.id}`)
+                        .send({ name: '' })
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_EMPTY_NAME)
+                        })
+                })
+
+                it('groups.patch005: should return status 400 and an error for wrong format administrator id.', () => {
+                    const wrongBody = {
+                        administrator: { id: '' }
+                    }
+
+                    return request.patch(`${URI}/${group.id}`)
+                        .send(wrongBody)
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_ADMINISTRATOR_ID)
+                        })
+                })
+            })
+
+            context('When a duplication ocurrs.', () => {
+                let anotherGroup: GroupMock
+                
+                before(async () => {
+                    try {
+                        anotherGroup = new GroupMock()
+                        anotherGroup.name = 'another group'
+                        anotherGroup.administrator = user
+                        anotherGroup.members = [ user ]
+
+                        await GroupsDBUtils.saveGroup(anotherGroup.toJSON())
+                            .then(res => anotherGroup.id = res.id)
+                    } catch (err) {
+                        console.log('Failure on before tests for PATCH /groups/:{group_id}', err.message)
+                    }
+                })
+
+                it('groups.patch006: should return status 409 when name updated is already registered.', () => {
+                    return request.patch(`${URI}/${anotherGroup.id}`)
+                        .send({ name: 'Group mock' })
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.CONFLICT)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_409_ALREADY_EXISTING_NAME)
+                        })
+                })
+            })
+
+            context('When the field cant updated.', () => {
+                it('groups.patch007: should return status 400 and a info message for field members cant be updated.', () => {
+                    const members = [ user ]
+
+                    return request.patch(`${URI}/${group.id}`)
+                        .send({ members })
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_MEMBERS_CANT_BE_APDATED)
+                        })
+                })
+
+                it('groups.patch008: should return status 400 and a info message for field questionnaires cant be updated.', () => {
+                    const questionnaires = [
+                        { id: '123456789123456789123456' }
+                    ]
+                    return request.patch(`${URI}/${group.id}`)
+                        .send({ questionnaires })
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_QUESTIONNAIRES_CANT_BE_APDATED)
+                        })
+                })
+            })
+        })
     })
 })
-
-
-// {
-//     id: 'asldhasodjasoij',
-//     administrator: {
-//         id: 'asodijasiodjasodpja',
-//         name: 'asopdk asopkd poask',
-//         institution: 'asdjasiodjasoi',
-//         email: 'asodijasiodj'
-//     },
-//     members: [
-//           
-//     ],
-//     questionnaires: [{
-//          id: '321361654564654',
-//          discipline: 'askdjasdjasdoi',
-//          questions_count: 10 
-//     }]/
-//}
-
-// question
-//     answer
-//         answercomments
-
-// [{
-//     id: 'asldhasodjasoij',
-//     administrator: {
-//         id: 'asodijasiodjasodpja',
-//         name: 'asopdk asopkd poask',
-//         institution: 'asdjasiodjasoi',
-//         email: 'asodijasiodj'
-//     },
-//     members_count: 3,
-//     questionaires_count: 5
-// }]
-
-// /groups/id/questionnaires
-
-// [{
-//      id: '321361654564654',
-//      discipline: 'askdjasdjasdoi',
-//      questions_count: 10 
-// }]

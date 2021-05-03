@@ -30,7 +30,6 @@ class GroupsRepository implements IRepository<Group> {
             this._groupRepoModel.find(filters)
                 .populate('administrator')
                 .then((result: any) => {
-                    console.log(result)
                     return resolve(result.map((item: any) => this._groupEntityMapper.transform(item)))
                 })
                 .catch((err: any) => {

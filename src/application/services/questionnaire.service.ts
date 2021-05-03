@@ -27,7 +27,6 @@ class QuestionnaireService implements IService<Questionnaire> {
     }
 
     public async addQuestion(questionnaire_id: string, question: Question): Promise<Question> {
-        //TODO
         try {
             ObjectIdValidator.validate(questionnaire_id)
             QuestionValidator.validateCreate(question)
