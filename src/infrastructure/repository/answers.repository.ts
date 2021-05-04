@@ -14,9 +14,10 @@ class AnswersRepository implements IRepository<Answer> {
     ) { }
 
     public async create(answer: Answer): Promise<Answer> {
+        const questionid = answer.question_id
         const newAnswer = this._answerEntityMapper.transform(answer)
         newAnswer.score = 0
-        const questionid = answer.question_id
+        
         console.log(newAnswer)
         return new Promise<Answer>((resolve, reject) => {
             
