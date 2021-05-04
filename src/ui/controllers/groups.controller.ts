@@ -91,11 +91,11 @@ export class GroupsController {
      * @param {Response} res 
      * @returns {Group}
      */
-    @Patch(':id')
+    @Patch(':group_id')
     public async updateGroupById(req: Request, res: Response): Promise<Response> {
         try {
             const group = new Group().fromJSON(req.body)
-            group.id = req.params.id
+            group.id = req.params.group_id
 
             const result = await groupsService.update(group)
             return res.status(HttpStatus.OK).send(result)
@@ -103,6 +103,16 @@ export class GroupsController {
             const apiException = ApiExceptionManager.build(err)
             return res.status(apiException.code).send(apiException)
         }
+    }
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     * @returns {Group}
+     */
+    @Delete(':group_id/members/:member_id')
+    public async removeUserFromGroup(req: Request, res: Response): Promise<Response> {
+        return res.status(HttpStatus.NO_CONTENT).send({})
     }
 
 }

@@ -49,7 +49,6 @@ const groupSchema = new Schema(
 
 // When delete a group, all their questionnaires will be deleted too
 groupSchema.post('findOneAndDelete', function (doc: IGroupModel) {
-    const filters = this.getFilter()
     if (doc){
         QuestionnaireRepoModel
             .deleteMany({ 

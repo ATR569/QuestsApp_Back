@@ -9,4 +9,8 @@ export abstract class GroupsDBUtils {
         return await GroupRepoModel.deleteMany({})
     }
 
+    public static async addMemberToGroup(member: any, group: any): Promise<any> {
+        const updateQuery = {$push: {members: member.id}}
+        return await GroupRepoModel.findOneAndUpdate({_id: group.id}, updateQuery)
+    }
 }

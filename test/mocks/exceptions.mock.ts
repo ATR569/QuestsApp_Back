@@ -17,7 +17,7 @@ export abstract class ExceptionsMock {
         ERROR_404_ADMINISTRATOR_NOT_REGISTERED: new ApiException(HttpStatus.NOT_FOUND, Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
             Messages.GROUPS.ADMIN_ID_NOT_REGISTERED).toJSON(),
         ERROR_404_GROUP_NOT_FOUND: new ApiException(HttpStatus.NOT_FOUND, Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'grupo').replace('{id}', '111111111111111111111111')).toJSON(),
+            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', '111111111111111111111111')).toJSON(),
         ERROR_400_INVALID_GROUP_ID: new ApiException(HttpStatus.BAD_REQUEST, Messages.ERROR_MESSAGE.INVALID_ID,
             Messages.ERROR_MESSAGE.INVALID_ID_DESC).toJSON(),
         ERROR_400_MEMBERS_CANT_BE_APDATED: new ApiException(HttpStatus.BAD_REQUEST, Messages.ERROR_MESSAGE.INVALID_FIELDS,
