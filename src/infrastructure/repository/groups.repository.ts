@@ -47,7 +47,7 @@ class GroupsRepository implements IRepository<Group> {
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'grupo').replace('{id}', id)))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', id)))
                     }
 
                     const group: any = this._groupEntityMapper.transform(result)
@@ -65,12 +65,17 @@ class GroupsRepository implements IRepository<Group> {
         return new Promise<Group>((resolve, reject) => {
             this._groupRepoModel.findByIdAndUpdate(group.id, groupUpd)
                 .then((result: any) => {
+                    if (!result) {
+                        return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', group.id)))
+                    }
+
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => {
                     return reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
                 })
-            })
+        })
     }
 
     public async delete(id: string): Promise<Group> {

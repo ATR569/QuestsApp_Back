@@ -285,7 +285,7 @@ describe('Routes: Groups', () => {
 
         context('When the group not found.', () => {
             it('groups.get_id002: should return status 404 for group not found.', () => {
-                const INEXISTENT_ID = new ObjectID().toHexString()
+                const INEXISTENT_ID = '111111111111111111111111'
 
                 return request.get(`${URI}/${INEXISTENT_ID}`)
                     .set('Content-Type', 'application/json')
@@ -362,7 +362,7 @@ describe('Routes: Groups', () => {
 
         context('When the group not found.', () => {
             it('groups.patch002: should return status 404 for group not found.', () => {
-                const INEXISTENT_ID = new ObjectID().toHexString()
+                const INEXISTENT_ID = '111111111111111111111111'
 
                 return request.patch(`${URI}/${INEXISTENT_ID}`)
                     .send({ name: 'updated name' })
@@ -531,7 +531,7 @@ describe('Routes: Groups', () => {
         })
     })
 
-    describe.only('DELETE /groups/:{group_id}/members/:{member_id}', () => {
+    describe('DELETE /groups/:{group_id}/members/:{member_id}', () => {
         let anotherUser: UserMock
         
         beforeEach(async () => {

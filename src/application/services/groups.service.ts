@@ -41,18 +41,18 @@ class GroupsService implements IService<Group> {
     }
 
     public async getById(group_id: string): Promise<Group> {
-        ObjectIdValidator.validate(group_id)
+        try {
+            ObjectIdValidator.validate(group_id)
 
-        return groupsRepository.findOne(group_id)
+            return groupsRepository.findOne(group_id)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
     public async update(group: Group): Promise<Group> {
         try {
             GroupValidator.validateUpdate(group)
-
-            if (!(await groupsRepository.checkExist({ _id: group.id })))
-                throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'grupo').replace('{id}', group.id))
 
             //  Check duplicate
             await groupsRepository
