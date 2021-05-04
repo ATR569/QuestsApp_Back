@@ -5,6 +5,7 @@ import { Question } from './question'
 export class Questionnaire extends Entity implements IJSONTransformable<Questionnaire> {
     private _discipline?: string
     private _questions?: Array<Question>
+    private _groupId?: string
 
     public get discipline(): string | undefined {
         return this._discipline
@@ -22,6 +23,14 @@ export class Questionnaire extends Entity implements IJSONTransformable<Question
         this._questions = questions
     }
 
+    public get groupId(): string | undefined {
+        return this._groupId
+    }
+
+    public set groupId(groupId: string | undefined) {
+        this._groupId = groupId
+    }
+
     public toJSON(): object {
         return {
             id: this.id,
@@ -34,6 +43,7 @@ export class Questionnaire extends Entity implements IJSONTransformable<Question
         if (json.id !== undefined) this.id = json.id
         if (json.discipline !== undefined) this.discipline = json.discipline
         if (json.questions !== undefined) this.questions = json.questions
+        if (json.groupId !== undefined) this.groupId = json.groupId
 
         return this
     }

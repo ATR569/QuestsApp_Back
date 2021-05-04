@@ -13,6 +13,9 @@ export abstract class QuestionnaireValidator {
             if (questionnaire.discipline == undefined) missingFields.push('disciplina')
             else StringValidator.validate(questionnaire.discipline, 'discipline')
 
+            if (questionnaire.groupId == undefined) missingFields.push('groupId')
+            else ObjectIdValidator.validate(questionnaire.groupId)
+
             if (missingFields.length > 0) {
                 throw new ValidationException(
                     Messages.ERROR_MESSAGE.REQUIRED_FIELDS,

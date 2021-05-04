@@ -29,8 +29,8 @@ export abstract class Messages {
         INVALID_ADMINISTRATOR_ID: 'O id do administrador não é válido.',
         ALREADY_REGISTERED: 'Já existe um grupo registrado com o nome fornecido: { {0} }.',
         FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.'
-    }    
-    
+    }
+
     public static readonly QUESTIONNAIRES: any = {
         ALREADY_REGISTERED: 'Já existe um questionário registrado com a disciplina: { {0} }.',
         ALREADY_REGISTERED_QUESTION: 'Já existe um questão registrada para o questionário { {0} } com a descrição: { {1} }.'
@@ -52,13 +52,13 @@ export abstract class Messages {
         INTERNAL_SERVER_ERROR: 'Erro interno do servidor!',
         REQUIRED_FIELDS: 'Alguns campos não foram fornecidos.',
         REQUIRED_FIELDS_DESC: 'Os campos: { {0} } são obrigatórios!',
-        
+
         INVALID_ID: 'Formato de ID inválido!',
         INVALID_ID_DESC: 'O ID deve ter 24 dígitos em hexadecimal!',
         INVALID_FIELDS: 'Um ou mais campos são inválidos...',
         INVALID_FIELDS_DESC: 'Os campos: { {0} } são vazios ou inválidos!',
         MSG_NOT_FOUND: 'Recurso não encontrado',
-        DESC_NOT_FOUND: 'Não existe { recurso } de id { id }',
+        DESC_NOT_FOUND: 'Não existe { {0} } de id { {1} }',
         EMPTY_STRING: 'O campo { {0} } deve ter pelo menos um caracter.',
     }
 

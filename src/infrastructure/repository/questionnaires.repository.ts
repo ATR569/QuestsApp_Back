@@ -1,24 +1,35 @@
 import { Questionnaire } from '@src/application/domain/model/questionnaire'
 import { Question } from '@src/application/domain/model/question'
+import { Group } from '@src/application/domain/model/group'
 import { IRepository } from '@src/application/port/repository.interface'
 import { QuestionnaireEntityMapper } from '../entity/questionnaire.entity'
 import { QuestionnaireRepoModel } from '../database/schema/questionnaire.schema'
-import { ConflictException, NotFoundException, RepositoryException } from '@src/application/domain/exception/exceptions'
+import { GroupRepoModel } from '../database/schema/groups.schema'
+import { NotFoundException, RepositoryException } from '@src/application/domain/exception/exceptions'
 import { Messages } from '@src/utils/messages'
 
 class QuestionnaireRepository implements IRepository<Questionnaire> {
     constructor(
         private readonly _questionnaireEntityMapper: QuestionnaireEntityMapper = new QuestionnaireEntityMapper(),
-        private readonly _questionnaireRepoModel: any = QuestionnaireRepoModel
+        private readonly _questionnaireRepoModel: any = QuestionnaireRepoModel,
+        private readonly _groupRepoModel: any = GroupRepoModel
     ) { }
 
     public async create(questionnaire: Questionnaire): Promise<Questionnaire> {
+        const groupId = questionnaire.groupId
         const newQuestionnaire = this._questionnaireEntityMapper.transform(questionnaire)
 
         return new Promise<Questionnaire>((resolve, reject) => {
             this._questionnaireRepoModel.create(newQuestionnaire)
-                .then((result: any) => {
-                    return resolve(this.findOne(result.id))
+                .then(async (result: any) => {
+                    const q: Questionnaire = await this.findOne(result.id)
+
+                    const group: Group = await this._groupRepoModel.findOne({ _id: groupId })
+                    group.questionnaires?.push(q)
+
+                    await this._groupRepoModel.findByIdAndUpdate(group.id, group)
+
+                    return resolve(q)
                 }).catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
         })
     }
@@ -43,7 +54,7 @@ class QuestionnaireRepository implements IRepository<Questionnaire> {
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'questionário').replace('{id}', id)))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'questionário').replace('{1}', id)))
                     }
 
                     const questionnaire: any = this._questionnaireEntityMapper.transform(result)

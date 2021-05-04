@@ -9,6 +9,7 @@ import { Messages } from '@src/utils/messages';
 import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 import { usersRepository } from '@src/infrastructure/repository/user.repository'
 import { questionsRepository } from '@src/infrastructure/repository/questions.repository'
+import { groupsRepository } from '@src/infrastructure/repository/groups.repository'
 
 class QuestionnaireService implements IService<Questionnaire> {
 
@@ -19,6 +20,10 @@ class QuestionnaireService implements IService<Questionnaire> {
             if ((await questionnairesRepository.checkExist({ discipline: questionnaire.discipline }))) {
                 throw new ConflictException(Messages.QUESTIONNAIRES.ALREADY_REGISTERED.replace('{0}', questionnaire.discipline))
             }
+
+            if (!(await groupsRepository.checkExist({ _id: questionnaire.groupId })))
+                throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', questionnaire.groupId))
 
             return questionnairesRepository.create(questionnaire)
         } catch (err) {
