@@ -37,6 +37,7 @@ export class QuestionnaireEntityMapper implements IEntityMapper<Questionnaire, Q
         if (json.discipline) questionnaire.discipline = json.discipline
         if (json.questions && json.questions instanceof Array)
             questionnaire.questions = json.questions.map((question: any) => new Question().fromJSON(question))
+        if (json.questions_count != undefined) questionnaire.questionsCount = json.questions_count
 
         return questionnaire
     }

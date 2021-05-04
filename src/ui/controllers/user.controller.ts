@@ -60,7 +60,7 @@ export class UsersController {
      * @param {Response} res 
      * @returns {Collection<Questionnaires>}
      */
-    @Get(':id/questionnaires')
+    @Get(':user_id/questionnaires')
     public async getAllQuestionnaires(req: Request, res: Response) {
         try {
             const result = await userService.getAllQuestionnaires(req.params.user_id)
@@ -81,7 +81,7 @@ export class UsersController {
      * @param {Response} res 
      * @returns {Collection<Group>}
      */
-    @Get(':id/groups')
+    @Get(':user_id/groups')
     public async getAllGroups(req: Request, res: Response) {
         try {
             const result = await userService.getAllGroups(req.params.user_id)

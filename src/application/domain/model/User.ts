@@ -39,19 +39,20 @@ export class User extends Entity implements IJSONTransformable<User> {
         this._institution = institution
     }
     
-    toJSON(): object {
+    public toJSON(): object {
         return {
             id: this.id,
             name: this.name,
             email: this.email,
-            password: this.password,
             institution: this.institution
         }
     }
-    fromJSON(json: any): User {
+
+    public fromJSON(json: any): User {
         if (json.id !== undefined) this.id = json.id
         if (json.name !== undefined) this.name = json.name
         if (json.email !== undefined) this.email = json.email
+        if (json.password !== undefined) this.password = json.password
         if (json.institution !== undefined) this.institution = json.institution
 
         return this

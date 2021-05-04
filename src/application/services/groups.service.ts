@@ -53,7 +53,18 @@ class GroupsService implements IService<Group> {
             if (!(await groupsRepository.checkExist({ _id: group.id })))
                 throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                     Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'grupo').replace('{id}', group.id))
-            
+
+            //  Check duplicate
+            await groupsRepository
+                .find({ name: group.name })
+                .then(res => {
+                    res.forEach(item => {
+                        if (item.id !== group.id) {
+                            throw new ConflictException(Messages.GROUPS.ALREADY_REGISTERED.replace('{0}', group.name))
+                        }
+                    })
+                })
+
             //  Check if the user is registered
             if (group.administrator !== undefined) {
                 if (!(await usersRepository.checkExist({ _id: group.administrator.id })))
@@ -68,11 +79,13 @@ class GroupsService implements IService<Group> {
     }
 
     public async remove(group_id: string): Promise<Group> {
-        return Promise.reject(new Error('Method not implemented. Remove group'))
-    }
+        try {
+            ObjectIdValidator.validate(group_id)
 
-    public async getAllQuestionnaires(group_id: string): Promise<Array<object>> {
-        return Promise.reject(new Error('Method not implemented. Get all questionnaires from group'))
+            return groupsRepository.delete(group_id)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
 }

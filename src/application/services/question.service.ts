@@ -11,27 +11,11 @@ import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 class QuestionService implements IService<Question> {
 
     public async add(question: Question): Promise<Question> {
-        try {
-            QuestionValidator.validateCreate(question)
-
-            if ((await questionsRepository.checkExist({description: question.description })))
-                throw new ConflictException(Messages.QUESTIONS.ALREADY_REGISTERED.replace('{0}', question.description))
-            
-                //  Check if the user is registered
-            if (question.creator !== undefined && question.creator.id !== undefined) {
-                if (!(await usersRepository.checkExist({ _id: question.creator.id })))
-                    throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                        Messages.QUESTIONS.CREATOR_ID_NOT_REGISTERED)
-            }            
-            //Creates the question
-            return questionsRepository.create(question)
-        } catch (err) {
-            return Promise.reject(err)
-        }
+        return Promise.reject(new Error('Method not implemented.'))
     }
 
     public async getAll(filters: object): Promise<Question[]> {
-         try {
+        try {
             return questionsRepository.find(filters)
         } catch (err) {
             return Promise.reject(err)
@@ -47,7 +31,7 @@ class QuestionService implements IService<Question> {
     public async update(item: Question): Promise<Question> {
         return Promise.reject(new Error('Method not implemented.'))
     }
-    
+
     public async remove(id: string): Promise<Question> {
         return questionsRepository.delete(id)
     }

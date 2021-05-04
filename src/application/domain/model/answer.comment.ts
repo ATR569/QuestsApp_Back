@@ -1,11 +1,9 @@
 import { Entity } from './entity'
 import { IJSONTransformable } from './json.transformer.interface'
-import { AnswerComment } from './answer.comment'
 
-export class Answer extends Entity implements IJSONTransformable<Answer> {
+export class AnswerComment extends Entity implements IJSONTransformable<AnswerComment> {
     private _description?: string
     private _score?: number
-    private _comments?: Array<AnswerComment>
 
     set description(description: string | undefined) {
         this._description = description
@@ -13,10 +11,6 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
 
     set score(score: number | undefined) {
         this._score = score
-    }
-
-    set comments(comments: Array<AnswerComment> | undefined) {
-        this._comments = comments
     }
 
     get description(): string | undefined{
@@ -27,22 +21,17 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
         return this._score
     }
 
-    get comments(): Array<AnswerComment> | undefined{
-        return this._comments
-    }
-
     public toJSON(): object {
         const json = {
             id: this.id,
             description: this.description,
-            score: this.score,
-            comments: this.comments,
+            score: this.score
         }
 
         return json
     }
     
-    public fromJSON(json: any): Answer {
+    public fromJSON(json: any): AnswerComment {
         if (json === undefined) {
             json = {}
         }
@@ -50,9 +39,6 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
         if (json.id !== undefined) this.id = json.id
         if (json.description !== undefined) this.description = json.description
         if (json.score !== undefined) this.score = json.score
-        if (json.comments !== undefined && json.comments instanceof Array) {
-            this.comments = json.comments.map((comment: any) => new AnswerComment().fromJSON(comment))
-        }
 
         return this
     }
