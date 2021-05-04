@@ -9,6 +9,7 @@ import { GroupsController } from '@src/ui/controllers/groups.controller'
 import { UsersController } from '@src/ui/controllers/user.controller'
 import { QuestionnaireController } from '@src/ui/controllers/questionnaire.controller'
 import { QuestionsController } from './ui/controllers/questions.controller'
+import { AnswerController } from './ui/controllers/answer.controller'
 import { MongoDB } from './infrastructure/database/mongo.db'
 import cors from 'cors'
 
@@ -52,13 +53,15 @@ export class SetupServer extends Server {
         const questionnaireController = new QuestionnaireController()
         const usersController = new UsersController()
         const questionsController = new QuestionsController()
-        
+        const answersController = new AnswerController()
+     
         // Add all controllers here
         const controllers: Array<object> = [
             groupsController,
             questionnaireController,
             usersController,
-            questionsController
+            questionsController,
+            answersController
         ]
 
         this.addControllers(controllers)

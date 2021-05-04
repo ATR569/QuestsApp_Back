@@ -6,6 +6,9 @@ import { QuestionValidator } from '../domain/validation/question.validator';
 import { ConflictException, NotFoundException } from '../domain/exception/exceptions';
 import { Messages } from '@src/utils/messages';
 import { ObjectIdValidator } from '../domain/validation/object.id.validator';
+import { Answer } from '../domain/model/answer';
+import { AnswerValidator } from '../domain/validation/answer.validator';
+import { answersRepository } from '@src/infrastructure/repository/answers.repository';
 
 
 class QuestionService implements IService<Question> {
@@ -14,10 +17,8 @@ class QuestionService implements IService<Question> {
         try {
             QuestionValidator.validateCreate(question)
 
-            if ((await questionsRepository.checkExist({description: question.description })))
-                throw new ConflictException(Messages.QUESTIONS.ALREADY_REGISTERED.replace('{0}', question.description))
-            
-                //  Check if the user is registered
+             
+            //  Check if the user is registered
             if (question.creator !== undefined && question.creator.id !== undefined) {
                 if (!(await usersRepository.checkExist({ _id: question.creator.id })))
                     throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
@@ -31,8 +32,24 @@ class QuestionService implements IService<Question> {
     }
 
     public async getAll(filters: object): Promise<Question[]> {
-         try {
+        try {
             return questionsRepository.find(filters)
+        } catch (err) {
+            return Promise.reject(err)
+        }
+    }
+
+    public async createAnswer( answer: Answer): Promise<Answer> {
+        try {
+            AnswerValidator.validateCreate(answer)
+            
+            
+            //Creates the answer
+            const ans = answersRepository.create(answer);
+            
+                    
+            
+            return ans
         } catch (err) {
             return Promise.reject(err)
         }
@@ -44,16 +61,28 @@ class QuestionService implements IService<Question> {
         return questionsRepository.findOne(question_id)
     }
 
-    public async update(item: Question): Promise<Question> {
-        return Promise.reject(new Error('Method not implemented.'))
+    public async update(question: Question): Promise<Question> {
+        try {
+
+            if (!(await questionsRepository.checkExist({ _id: question.id })))
+                throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'question').replace('{id}', question.id))
+
+            return questionsRepository.update(question)
+        } catch (err) {
+            return Promise.reject(err)
+        }
+    
     }
     
     public async remove(id: string): Promise<Question> {
         return questionsRepository.delete(id)
     }
 
-    public async getAllAnswers(group_id: string): Promise<Array<object>> {
-        return Promise.reject(new Error('Method not implemented. Get all answers from questions'))
+    public async getAllAnswers(question_id: string): Promise<Array<Answer>> {
+        ObjectIdValidator.validate(question_id)
+
+        return questionsRepository.getAnswers(question_id)
     }
 }
 
