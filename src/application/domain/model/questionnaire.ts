@@ -6,6 +6,7 @@ export class Questionnaire extends Entity implements IJSONTransformable<Question
     private _discipline?: string
     private _questions?: Array<Question>
     private _groupId?: string
+    private _questionsCount?: number
 
     public get discipline(): string | undefined {
         return this._discipline
@@ -31,11 +32,23 @@ export class Questionnaire extends Entity implements IJSONTransformable<Question
         this._groupId = groupId
     }
 
+    public get questionsCount(): number | undefined {
+        return this._questionsCount
+    }
+
+    public set questionsCount(questionsCount: number | undefined) {
+        this._questionsCount = questionsCount
+    }
+
     public toJSON(): object {
-        return {
+        return (this._questions) ? {
             id: this.id,
             discipline: this.discipline,
             questions: this.questions
+        } : {
+            id: this.id,
+            discipline: this.discipline,
+            questionsCount: this.questionsCount
         }
     }
 
