@@ -1,6 +1,5 @@
 import { Questionnaire } from '@src/application/domain/model/questionnaire'
 import { Question } from '@src/application/domain/model/question'
-import { Group } from '@src/application/domain/model/group'
 import { IRepository } from '@src/application/port/repository.interface'
 import { QuestionnaireEntityMapper } from '../entity/questionnaire.entity'
 import { QuestionnaireRepoModel } from '../database/schema/questionnaire.schema'
@@ -22,14 +21,9 @@ class QuestionnaireRepository implements IRepository<Questionnaire> {
         return new Promise<Questionnaire>((resolve, reject) => {
             this._questionnaireRepoModel.create(newQuestionnaire)
                 .then(async (result: any) => {
-                    const q: Questionnaire = await this.findOne(result.id)
+                    await this._groupRepoModel.findByIdAndUpdate(groupId, { $push: { questionnaires: result.id } })
 
-                    const group: Group = await this._groupRepoModel.findOne({ _id: groupId })
-                    group.questionnaires?.push(q)
-
-                    await this._groupRepoModel.findByIdAndUpdate(group.id, group)
-
-                    return resolve(q)
+                    return resolve(this.findOne(result.id))
                 }).catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
         })
     }
