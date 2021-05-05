@@ -44,10 +44,12 @@ export class Questionnaire extends Entity implements IJSONTransformable<Question
         return (this._questions) ? {
             id: this.id,
             discipline: this.discipline,
+            groupId: this.groupId,
             questions: this.questions
         } : {
             id: this.id,
             discipline: this.discipline,
+            groupId: this.groupId,
             questionsCount: this.questionsCount
         }
     }
