@@ -20,7 +20,30 @@ export class QuestionnaireController {
     public async saveQuestionnaire(req: Request, res: Response): Promise<Response> {
         try {
             const questionnaire = new Questionnaire().fromJSON(req.body).asNewEntity()
+            questionnaire.questions = undefined
+
             const result = await questionnairesService.add(questionnaire)
+            return res.status(HttpStatus.CREATED).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
+    }
+
+    /**
+     * Creates a new question
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     * @returns {Question}
+     */
+    @Post(':questionnaire_id/questions')
+    public async saveQuestion(req: Request, res: Response): Promise<Response> {
+        try {
+            const questionnaire_id = req.params.questionnaire_id
+            const createdQuestion = new Question().fromJSON(req.body).asNewEntity()
+
+            const result = await questionnairesService.addQuestion(questionnaire_id, createdQuestion)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -77,6 +100,8 @@ export class QuestionnaireController {
         try {
             const questionnaire = new Questionnaire().fromJSON(req.body)
             questionnaire.id = req.params.questionnaire_id
+            questionnaire.questions = undefined
+
             const result = await questionnairesService.update(questionnaire)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
@@ -103,40 +128,16 @@ export class QuestionnaireController {
     }
 
     /**
-     * Creates a new question
+     * Remove a question from questionnaire
      * 
      * @param {Request} req 
      * @param {Response} res 
-     * @returns {Question}
      */
-    @Post(':questionnaire_id/questions')
-    public async saveQuestion(req: Request, res: Response): Promise<Response> {
+    @Delete(':questionnaire_id/questions/:question_id')
+    public async removeQuestionFromQuestionnaire(req: Request, res: Response): Promise<Response> {
         try {
-            const questionnaire_id = req.params.questionnaire_id
-            const createdQuestion = new Question().fromJSON(req.body).asNewEntity()
-
-            const result = await questionnairesService.addQuestion(questionnaire_id, createdQuestion)
-            return res.status(HttpStatus.CREATED).send(result)
-        } catch (err) {
-            const apiException = ApiExceptionManager.build(err)
-            return res.status(apiException.code).send(apiException)
-        }
-    }
-
-    /**
-     * Get all questions from questionnaire
-     * 
-     * @param {Request} req 
-     * @param {Response} res 
-     * @returns {Array<Question>}
-     */
-    @Get(':questionnaire_id/questions')
-    public async getAllQuestionsFromQuestionnaire(req: Request, res: Response): Promise<Response> {
-        try {
-            const result = await questionnairesService
-                .getAllQuestionsFromQuestionnaire(req.params.questionnaire_id)
-
-            return res.status(HttpStatus.OK).send(result)
+            const result = await questionnairesService.removeQuestion(req.params.questionnaire_id, req.params.question_id)
+            return res.status(HttpStatus.NO_CONTENT).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
             return res.status(apiException.code).send(apiException)

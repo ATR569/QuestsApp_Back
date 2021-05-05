@@ -4,7 +4,6 @@ import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
 import { groupsService} from '@src/application/services/groups.service'
 import { Group } from '@src/application/domain/model/group'
-import { GroupValidator } from '@src/application/domain/validation/group.validator'
 
 @Controller('groups')
 export class GroupsController {
@@ -68,35 +67,17 @@ export class GroupsController {
     }
 
     /**
-     * Get a study group by id
-     * 
-     * @param {Request} req 
-     * @param {Response} res 
-     * @returns {Group}
-     */
-    @Get(':id/questionnaires')
-    public async getAllQuestionnairesFromGroup(req: Request, res: Response): Promise<Response> {
-        try {
-            const result = await groupsService.getAllQuestionnaires(req.params.group_id)
-            return res.status(HttpStatus.OK).send(result)
-        } catch (err) {
-            const apiException = ApiExceptionManager.build(err)
-            return res.status(apiException.code).send(apiException)
-        }
-    }
-
-    /**
      * Remove a study group by id
      * 
      * @param {Request} req 
      * @param {Response} res 
      * @returns {Group}
      */
-    @Delete(':id')
+    @Delete(':group_id')
     public async removeGroup(req: Request, res: Response): Promise<Response> {
         try {
-            const result = await groupsService.remove(req.params.group_id)
-            return res.status(HttpStatus.NO_CONTENT).send(result)
+            await groupsService.remove(req.params.group_id)
+            return res.status(HttpStatus.NO_CONTENT).send()
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
             return res.status(apiException.code).send(apiException)

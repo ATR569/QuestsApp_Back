@@ -1,13 +1,16 @@
 import { Entity } from './entity'
 import { IJSONTransformable } from './json.transformer.interface'
 import { AnswerComment } from './answer.comment'
+import { User } from './User'
 
 export class Answer extends Entity implements IJSONTransformable<Answer> {
 
     private _description?: string
+    private _creator?: User
     private _score?: number
-    private _comments?: Array<AnswerComment>
-    private _question_id?: string
+    private _questionID?: string
+    private _answerComments?: Array<AnswerComment>
+    
 
     set description(description: string | undefined) {
         this._description = description
@@ -17,8 +20,8 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
         this._score = score
     }
 
-    set comments(comments: Array<AnswerComment> | undefined) {
-        this._comments = comments
+    set answerComments(answerComments: Array<AnswerComment> | undefined) {
+        this._answerComments = answerComments
     }
 
     get description(): string | undefined{
@@ -29,25 +32,36 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
         return this._score
     }
 
-    get comments(): Array<AnswerComment> | undefined{
-        return this._comments
+    get answerComments(): Array<AnswerComment> | undefined{
+        return this._answerComments
     }
 
-    set question_id(question_id: string | undefined){
-        this._question_id = question_id
+    set questionID(questionID: string | undefined){
+        this._questionID = questionID
     }
 
-    get question_id(): string | undefined{
-        return this._question_id
+    get questionID(): string | undefined{
+        return this._questionID
     }
+
+    get creator() : User | undefined{
+        return this._creator
+    }
+
+    set creator(creator: User | undefined) {
+        this._creator = creator
+    }
+
 
     public toJSON(): object {
         const json = {
             id: this.id,
+            creator: this.creator,
             description: this.description,
             score: this.score,
-            comments: this.comments,
-            question_id: this.question_id
+            questionID: this.questionID,
+            answerComments: this.answerComments
+            
         }
 
         return json
@@ -60,11 +74,13 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
 
         if (json.id !== undefined) this.id = json.id
         if (json.description !== undefined) this.description = json.description
+        if (json.creator !== undefined) this.creator = json.creator
         if (json.score !== undefined) this.score = json.score
-        if (json.comments !== undefined && json.comments instanceof Array) {
-            this.comments = json.comments.map((comment: any) => new AnswerComment().fromJSON(comment))
+        if (json.questionID !== undefined) this.questionID = json.questionID
+        if (json.answerComments !== undefined && json.answerComments instanceof Array) {
+            this.answerComments = json.answerComments.map((comment: any) => new AnswerComment().fromJSON(comment))
         }
-        if (json.question_id !== undefined) this.question_id = json.question_id
+        
         
         return this
     }

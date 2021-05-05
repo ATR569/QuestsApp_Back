@@ -10,6 +10,35 @@ export abstract class AnswerValidator {
 
         try {
             if (answer.description === undefined) missingFields.push('description')
+            if (answer.creator === undefined) {
+                missingFields.push('creator')
+
+            } else if (answer.creator.id === undefined) {
+                throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
+                    Messages.ANSWERS.CREATOR_ID_NOT_PROVIDED)
+            } else {
+                try {
+                    ObjectIdValidator.validate(answer.creator.id)
+                } catch (err) {
+                    throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
+                        Messages.ERROR_MESSAGE.INVALID_ID)
+                }
+            }
+
+            if (answer.questionID === undefined) {
+                missingFields.push('questionID')
+
+            } else if (answer.questionID === undefined) {
+                throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
+                    Messages.ANSWERS.CREATOR_ID_NOT_PROVIDED)
+            } else {
+                try {
+                    ObjectIdValidator.validate(answer.questionID)
+                } catch (err) {
+                    throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
+                        Messages.ERROR_MESSAGE.INVALID_ID)
+                }
+            }
 
             if (missingFields.length > 0) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,

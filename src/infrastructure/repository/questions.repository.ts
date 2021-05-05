@@ -1,23 +1,30 @@
+import { NotFoundException, RepositoryException } from '@src/application/domain/exception/exceptions'
+import { Answer } from '@src/application/domain/model/answer'
 import { Question } from '@src/application/domain/model/question'
 import { IRepository } from '@src/application/port/repository.interface'
-import { QuestionEntityMapper } from '../entity/question.entity'
-import { QuestionRepoModel } from '../database/schema/questions.schema'
-import { NotFoundException, RepositoryException } from '@src/application/domain/exception/exceptions'
 import { Messages } from '@src/utils/messages'
-import { Answer } from '@src/application/domain/model/answer'
+import { QuestionRepoModel } from '../database/schema/questions.schema'
+import { QuestionEntityMapper } from '../entity/question.entity'
 
 class QuestionsRepository implements IRepository<Question> {
     constructor(
         private readonly _questionEntityMapper: QuestionEntityMapper = new QuestionEntityMapper(),
-        private readonly _questionRepoModel: any = QuestionRepoModel
+        private readonly _questionRepoModel: any = QuestionRepoModel,
+        private readonly _questionnaireRepoModel: any = QuestionRepoModel
     ) { }
 
     public async create(question: Question): Promise<Question> {
+        
+        const questionnaireId = question.questionnaireID
         const newQuestion = this._questionEntityMapper.transform(question)
 
         return new Promise<Question>((resolve, reject) => {
             this._questionRepoModel.create(newQuestion)
-                .then((result: any) => {
+                .then(async(result: any) => {
+
+                    const update = { $push: { questions: result.id} }
+                    
+                    await this._questionnaireRepoModel.findByIdAndUpdate(questionnaireId, update, { new: true })
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => {
@@ -87,7 +94,7 @@ class QuestionsRepository implements IRepository<Question> {
         const update = { _description: questionUpd.description}    
         return new Promise<Question>((resolve, reject) => {
             
-            this._questionRepoModel.findOneAndUpdate({ _id: questionUpd.id }, update, { new: true })
+            this._questionRepoModel.findByIdAndUpdate(questionUpd.id , update, { new: true })
                 .then((result: any) => {
                     if (!result)
                         return reject(new NotFoundException(
@@ -105,7 +112,7 @@ class QuestionsRepository implements IRepository<Question> {
 
     public async delete(id: string): Promise<Question> {
         return new Promise<Question>((resolve, reject) => {
-
+            //falta apagar referencias
             this._questionRepoModel.findOneAndDelete({ _id: id })
                 .then((result: any) => {
                     return resolve(new Question())

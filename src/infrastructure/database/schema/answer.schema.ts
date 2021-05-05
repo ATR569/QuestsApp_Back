@@ -5,9 +5,10 @@ import { QuestionRepoModel } from './questions.schema'
 
 interface IAnswerModel extends Mongoose.Document { 
     description?: string
+    creator?: string
     score?: number
-    comments?: Array<string>
-    question_id?: string
+    questionID?: string
+    answerComments?: Array<string>
 }
 
 const answerSchema = new Schema(
@@ -19,7 +20,11 @@ const answerSchema = new Schema(
         score: {
             type: Schema.Types.Number
         },
-        comments: [{
+        questionID: {
+            type: String,
+            required: 'O Id da questão é obrigatório!'
+        },
+        answerComments: [{
             type: Schema.Types.ObjectId,
             ref: 'AnswerComment'
         }],
@@ -38,18 +43,33 @@ const answerSchema = new Schema(
     }
 )
 
-// When delete a answer, all their references will be deleted too
-answerSchema.post('findOneAndDelete', function (doc: IAnswerModel) {
+// Before delete a answer... all their references will be deleted too
+/*answerSchema.pre('findByIdAndDelete', function (doc:IAnswerModel)){
+    const filters = this.getFilter()
+    
+    if (doc){
+        QuestionRepoModel
+            .remove({answers: doc.id})
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err))
+    }
+
+}
+*/
+// When delete a answer... all their comments will be deleted too
+answerSchema.post('findByIdAndDelete', function (doc: IAnswerModel) {
     const filters = this.getFilter()
     if (doc){
         AnswerCommentRepoModel
             .deleteMany({ 
-                _id: { $in: doc.comments} 
+                _id: { $in: doc.answerComments} 
             })
             .then(res => Promise.resolve(res))
             .catch(err => Promise.reject(err))
     }
+    
 })
+
 
 
 export const AnswerRepoModel = Mongoose.model<IAnswerModel>('Answer', answerSchema)

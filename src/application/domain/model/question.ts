@@ -7,7 +7,7 @@ export class Question extends Entity implements IJSONTransformable<Question> {
     private _description?: string
     private _creator?: User
     private _answers?: Array<Answer>
-    private _questionnaire_id?: string
+    private _questionnaireID?: string
 
     get description() : string | undefined{
         return this._description
@@ -33,12 +33,12 @@ export class Question extends Entity implements IJSONTransformable<Question> {
         this._answers = answers
     }
     
-    set questionnaire_id(questionnaire_id: string | undefined){
-        this._questionnaire_id = questionnaire_id
+    set questionnaireID(questionnaireID: string | undefined){
+        this._questionnaireID = questionnaireID
     }
 
-    get question_id(): string | undefined{
-        return this._questionnaire_id
+    get questionID(): string | undefined{
+        return this._questionnaireID
     }
 
     public toJSON(): object {
@@ -46,8 +46,9 @@ export class Question extends Entity implements IJSONTransformable<Question> {
             id: this.id,
             description: this.description,
             creator: this.creator,
-            answers: this.answers,
-            questionnaire_id: this.questionnaire_id
+            questionnaireID: this.questionnaireID,
+            answers: this.answers
+            
         }
     }
 
@@ -55,8 +56,9 @@ export class Question extends Entity implements IJSONTransformable<Question> {
         if (json.id !== undefined) this.id = json.id
         if (json.description !== undefined) this.description = json.description
         if (json.creator !== undefined) this.creator = json.creator
+        if (json.questionnaireID !== undefined) this.questionnaireID = json.questionnaireID
         if (json.answers !== undefined) this.answers = json.answers
-        if (json.questionnaire_id !== undefined) this.questionnaire_id = json.questionnaire_id
+        
 
         return this
     }

@@ -12,6 +12,10 @@ import { QuestionsController } from './ui/controllers/questions.controller'
 import { AnswerController } from './ui/controllers/answer.controller'
 import { MongoDB } from './infrastructure/database/mongo.db'
 import cors from 'cors'
+require('dotenv').config()
+
+const port_http = process.env.PORT_HTTP || 3001
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/questsapp'
 
 export class SetupServer extends Server {
     private readonly database = new MongoDB()
@@ -19,10 +23,10 @@ export class SetupServer extends Server {
     private mongoUri: string
     private port: any
 
-    constructor(port: any,  mongoUri: string ){
+    constructor(){
         super()
         this.mongoUri = mongoUri
-        this.port = port
+        this.port = port_http
     }
 
     public init(): void {

@@ -25,6 +25,21 @@ export abstract class QuestionValidator {
                 }
             }
 
+            if (question.questionnaireID === undefined) {
+                missingFields.push('questionnaireID')
+
+            } else if (question.questionnaireID === undefined) {
+                throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
+                    Messages.QUESTIONNAIRES.CREATOR_ID_NOT_PROVIDED)
+            } else {
+                try {
+                    ObjectIdValidator.validate(question.questionnaireID)
+                } catch (err) {
+                    throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
+                        Messages.ERROR_MESSAGE.INVALID_ID)
+                }
+            }
+
             if (missingFields.length > 0) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
                     Messages.ERROR_MESSAGE.REQUIRED_FIELDS_DESC.replace('{0}', missingFields.join(', ')))
@@ -40,8 +55,7 @@ export abstract class QuestionValidator {
         try {
             if (question.id === undefined) missingFields.push('id')
             if (question.description === undefined) missingFields.push('description')
-            if (question.creator === undefined) missingFields.push('creator')
-
+            
             if (missingFields.length > 0) {
                 throw new ValidationException(
                     Messages.ERROR_MESSAGE.REQUIRED_FIELDS,

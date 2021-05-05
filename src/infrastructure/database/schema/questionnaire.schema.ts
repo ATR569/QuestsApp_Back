@@ -1,6 +1,11 @@
 import Mongoose, { Schema } from 'mongoose'
+import { QuestionRepoModel } from './questions.schema'
 
-interface IQuestionnaireModel extends Mongoose.Document { }
+interface IQuestionnaireModel extends Mongoose.Document {
+    discipline?: string,
+    questions?: Array<string>,
+    questions_count?: number
+}
 
 const questionnaireSchema = new Schema(
     {
@@ -11,7 +16,10 @@ const questionnaireSchema = new Schema(
         questions: [{
             type: Schema.Types.ObjectId,
             ref: 'Question'
-        }]
+        }],
+        questions_count: {
+            type: Schema.Types.Number
+        },
     },
     {
         toJSON: {
@@ -24,5 +32,26 @@ const questionnaireSchema = new Schema(
         }
     }
 )
+
+questionnaireSchema.post('findOneAndDelete', function (doc: IQuestionnaireModel) {
+    const filters = this.getFilter()
+    if (doc) {
+        QuestionRepoModel
+            .deleteMany({
+                _id: { $in: doc.questions }
+            })
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err))
+    }
+})
+
+questionnaireSchema.post('find', function (doc: Array<IQuestionnaireModel>) {
+    doc.forEach(item => {
+        if (item.questions) {
+            item.questions_count = item.questions.length
+            item.questions = undefined
+        }
+    })
+})
 
 export const QuestionnaireRepoModel = Mongoose.model<IQuestionnaireModel>('Questionnaire', questionnaireSchema)
