@@ -105,14 +105,21 @@ export class GroupsController {
         }
     }
     /**
+     * Remove a user from a group
      * 
      * @param {Request} req 
      * @param {Response} res 
      * @returns {Group}
      */
     @Delete(':group_id/members/:member_id')
-    public async removeUserFromGroup(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.NO_CONTENT).send({})
+    public async removeMember(req: Request, res: Response): Promise<Response> {
+        try {
+            await groupsService.removeUserFromGroup(req.params.group_id, req.params.member_id)
+            return res.status(HttpStatus.NO_CONTENT).send()
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
 }

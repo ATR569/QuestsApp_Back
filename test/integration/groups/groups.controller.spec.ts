@@ -304,7 +304,7 @@ describe('Routes: Groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(res => {
-                        expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_GROUP_ID)
+                        expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_ID)
                     })
             })
         })
@@ -384,7 +384,7 @@ describe('Routes: Groups', () => {
                         .set('Content-Type', 'application/json')
                         .expect(HttpStatus.BAD_REQUEST)
                         .then(res => {
-                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_GROUP_ID)
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_ID)
                         })
                 })
             })
@@ -525,7 +525,7 @@ describe('Routes: Groups', () => {
                     .set('Content-Type', 'application/json')
                     .expect(HttpStatus.BAD_REQUEST)
                     .then(res => {
-                        expect(res.body).eql(ExceptionsMock.GROUP.ERROR_400_INVALID_GROUP_ID)
+                        expect(res.body).eql(ExceptionsMock.GROUP.ERROR_400_INVALID_ID)
                     })
             })
         })
@@ -533,7 +533,7 @@ describe('Routes: Groups', () => {
 
     describe('DELETE /groups/:{group_id}/members/:{member_id}', () => {
         let anotherUser: UserMock
-        
+
         beforeEach(async () => {
             anotherUser = new UserMock()
             anotherUser.email = 'another@questsapp.com'
@@ -568,6 +568,67 @@ describe('Routes: Groups', () => {
                     .then(res => {
                         expect(res.body).to.eql({})
                     })
+            })
+
+            it('groups.members.delete002: should return status 204 and an empty body, even if the member not belongs to the group.', () => {
+                const NOT_EXISTENT_MEMBER_ID = '111111111111111111111111'
+
+                return request.delete(`${URI}/${group.id}/members/${NOT_EXISTENT_MEMBER_ID}`)
+                    .set('Content-Type', 'application/json')
+                    .expect(HttpStatus.NO_CONTENT)
+                    .then(res => {
+                        expect(res.body).to.eql({})
+                    })
+            })
+        })
+
+        context('When the group not found.', () => {
+            it('groups.members.delete003: should return status 404 and an info message for group not found.', () => {
+                const NON_EXISTENT_GROUP_ID = '111111111111111111111111'
+
+                return request.delete(`${URI}/${NON_EXISTENT_GROUP_ID}/members/${anotherUser.id}`)
+                    .set('Content-Type', 'application/json')
+                    .expect(HttpStatus.NOT_FOUND)
+                    .then(res => {
+                        expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_404_GROUP_NOT_FOUND)
+                    })
+            })
+        })
+
+        describe('When a validation error ocurrs.', () => {
+            context('When provide invalid ids.', () => {
+                it('groups.members.delete004: should return status 400 and an info message for invalid group id.', () => {
+                    const INVALID_GROUP_ID = '123456'
+
+                    return request.delete(`${URI}/${INVALID_GROUP_ID}/members/${anotherUser.id}`)
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_ID)
+                        })
+                })
+
+                it('groups.members.delete005: should return status 400 and an info message for invalid group id.', () => {
+                    const INVALID_MEMBER_ID = '123456'
+
+                    return request.delete(`${URI}/${group.id}/members/${INVALID_MEMBER_ID}`)
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_INVALID_ID)
+                        })
+                })
+            })
+
+            context('When the member is admin.', () => {
+                it('groups.members.delete006: should return status 400 and an info message for admin cant be removed.', () => {
+                    return request.delete(`${URI}/${group.id}/members/${user.id}`)
+                        .set('Content-Type', 'application/json')
+                        .expect(HttpStatus.BAD_REQUEST)
+                        .then(res => {
+                            expect(res.body).to.eql(ExceptionsMock.GROUP.ERROR_400_ADMIN_CANT_BE_REMOVED)
+                        })
+                })
             })
         })
     })

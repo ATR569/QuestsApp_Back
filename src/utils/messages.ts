@@ -28,7 +28,9 @@ export abstract class Messages {
         ADMIN_ID_NOT_REGISTERED: 'O id fornecido para o administrador do grupo não está registrado no sistema!',
         INVALID_ADMINISTRATOR_ID: 'O id do administrador não é válido.',
         ALREADY_REGISTERED: 'Já existe um grupo registrado com o nome fornecido: { {0} }.',
-        FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.'
+        FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.',
+        MEMBER_NOT_REMOVED: 'Membro do grupo não removido.',
+        ADMIN_CANT_BE_REMOVED: 'O admininstrador do grupo não pode ser removido.',
     }
 
     public static readonly QUESTIONNAIRES: any = {

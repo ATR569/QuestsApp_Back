@@ -90,6 +90,18 @@ class GroupsRepository implements IRepository<Group> {
         })
     }
 
+    public async deleteMember(groupId: string, memberId: string): Promise<Group> {
+        return new Promise<Group>((resolve, reject) => {
+            this._groupRepoModel.findByIdAndUpdate({ _id: groupId }, { $pull: { members: memberId } })
+                .then((result: any) => {
+                    return resolve(new Group())
+                })
+                .catch((err: any) => {
+                    reject(err)
+                })
+        })
+    }
+
     public async count(filters: object): Promise<number> {
         throw new Error('Method not implemented.')
     }
@@ -99,6 +111,16 @@ class GroupsRepository implements IRepository<Group> {
         return new Promise<boolean>((resolve, reject) => {
             this._groupRepoModel.findOne(filters)
                 .then((result: any) => resolve(!!result))
+                .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
+        })
+    }
+
+    public async checkAdmin(groupId: string, memberId: string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this._groupRepoModel.findOne({ _id: groupId })
+                .then((result: any) => {
+                    resolve(result.administrator !== undefined && result.administrator.toString() === memberId)
+                })
                 .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
         })
     }
