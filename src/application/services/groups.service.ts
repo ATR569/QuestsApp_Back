@@ -3,7 +3,7 @@ import { IService } from '../port/service.interface'
 import { groupsRepository } from '@src/infrastructure/repository/groups.repository'
 import { usersRepository } from '@src/infrastructure/repository/user.repository'
 import { GroupValidator } from '../domain/validation/group.validator';
-import { ConflictException, NotFoundException } from '../domain/exception/exceptions';
+import { ConflictException, NotFoundException, ValidationException } from '../domain/exception/exceptions';
 import { Messages } from '@src/utils/messages';
 import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 
@@ -41,18 +41,18 @@ class GroupsService implements IService<Group> {
     }
 
     public async getById(group_id: string): Promise<Group> {
-        ObjectIdValidator.validate(group_id)
+        try {
+            ObjectIdValidator.validate(group_id)
 
-        return groupsRepository.findOne(group_id)
+            return groupsRepository.findOne(group_id)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
     public async update(group: Group): Promise<Group> {
         try {
             GroupValidator.validateUpdate(group)
-
-            if (!(await groupsRepository.checkExist({ _id: group.id })))
-                throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'grupo').replace('{id}', group.id))
 
             //  Check duplicate
             await groupsRepository
@@ -83,6 +83,28 @@ class GroupsService implements IService<Group> {
             ObjectIdValidator.validate(group_id)
 
             return groupsRepository.delete(group_id)
+        } catch (err) {
+            return Promise.reject(err)
+        }
+    }
+
+    public async removeUserFromGroup(group_id: string, member_id: string): Promise<Group> {
+        try {
+            ObjectIdValidator.validate(group_id)
+            ObjectIdValidator.validate(member_id)
+
+            //  Check if the group is registered
+            if (!(await groupsRepository.checkExist({ _id: group_id })))
+                throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', group_id))
+
+            const isAdmin = await groupsRepository.checkAdmin(group_id, member_id)
+            if (isAdmin) {
+                throw new ValidationException(Messages.GROUPS.MEMBER_NOT_REMOVED,
+                    Messages.GROUPS.ADMIN_CANT_BE_REMOVED)
+            }
+
+            return groupsRepository.deleteMember(group_id, member_id)
         } catch (err) {
             return Promise.reject(err)
         }
