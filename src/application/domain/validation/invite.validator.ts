@@ -78,6 +78,11 @@ export abstract class InviteValidator {
                 throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                     Messages.INVITES.FIELD_CANT_UPDATED.replace('{0}', 'user'))
             }
+
+            if (invite.date !== undefined){
+                throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
+                    Messages.INVITES.FIELD_CANT_UPDATED.replace('{0}', 'date'))
+            }
         } catch (err) {
             throw err
         }

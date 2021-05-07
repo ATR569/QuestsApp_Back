@@ -10,7 +10,7 @@ export enum InviteStatus {
 }
 
 export class Invite extends Entity implements IJSONTransformable<Invite>{
-    private _date?: string
+    private _date?: string          //  invite.date maps the date of the last change of status (or creation)
     private _group?: Group
     private _user?: User
     private _status?: InviteStatus
