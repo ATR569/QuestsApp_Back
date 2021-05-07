@@ -1,4 +1,4 @@
-import '../../../src/utils/module-alias'
+import '../utils/module-alias'
 import { GroupsDBUtils } from '@test/utils/database/groups.db.utils'
 import { UserMock } from '@test/mocks/models/user.mock'
 import { GroupMock } from '@test/mocks/models/group.mock'
@@ -7,7 +7,7 @@ import { SetupServer } from '@src/server'
 import supertest from 'supertest'
 import HttpStatus from 'http-status-codes'
 import { expect } from 'chai'
-import { ExceptionsMock } from '../../mocks/exceptions.mock'
+import { ExceptionsMock } from '../mocks/exceptions.mock'
 import { ObjectID } from 'bson'
 
 
