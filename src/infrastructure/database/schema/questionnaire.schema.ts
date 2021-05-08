@@ -3,6 +3,7 @@ import { QuestionRepoModel } from './questions.schema'
 
 interface IQuestionnaireModel extends Mongoose.Document {
     discipline?: string,
+    groupId?: string,
     questions?: Array<string>,
     questions_count?: number
 }
@@ -12,6 +13,10 @@ const questionnaireSchema = new Schema(
         discipline: {
             type: String,
             required: 'disciplina é obrigatória'
+        },
+        groupId: {
+            type: String,
+            required: 'grupo é obrigatório'
         },
         questions: [{
             type: Schema.Types.ObjectId,

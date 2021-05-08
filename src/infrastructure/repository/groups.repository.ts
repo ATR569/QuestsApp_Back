@@ -47,7 +47,7 @@ class GroupsRepository implements IRepository<Group> {
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'grupo').replace('{id}', id)))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', id)))
                     }
 
                     const group: any = this._groupEntityMapper.transform(result)
@@ -65,17 +65,34 @@ class GroupsRepository implements IRepository<Group> {
         return new Promise<Group>((resolve, reject) => {
             this._groupRepoModel.findByIdAndUpdate(group.id, groupUpd)
                 .then((result: any) => {
+                    if (!result) {
+                        return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', group.id)))
+                    }
+
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => {
                     return reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
                 })
-            })
+        })
     }
 
     public async delete(id: string): Promise<Group> {
         return new Promise<Group>((resolve, reject) => {
             this._groupRepoModel.findOneAndDelete({ _id: id })
+                .then((result: any) => {
+                    return resolve(new Group())
+                })
+                .catch((err: any) => {
+                    reject(err)
+                })
+        })
+    }
+
+    public async deleteMember(groupId: string, memberId: string): Promise<Group> {
+        return new Promise<Group>((resolve, reject) => {
+            this._groupRepoModel.findByIdAndUpdate({ _id: groupId }, { $pull: { members: memberId } })
                 .then((result: any) => {
                     return resolve(new Group())
                 })
@@ -94,6 +111,16 @@ class GroupsRepository implements IRepository<Group> {
         return new Promise<boolean>((resolve, reject) => {
             this._groupRepoModel.findOne(filters)
                 .then((result: any) => resolve(!!result))
+                .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
+        })
+    }
+
+    public async checkAdmin(groupId: string, memberId: string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this._groupRepoModel.findOne({ _id: groupId })
+                .then((result: any) => {
+                    resolve(result.administrator !== undefined && result.administrator.toString() === memberId)
+                })
                 .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
         })
     }
