@@ -6,12 +6,19 @@
 export abstract class Messages {
 
     public static readonly AUTH: any = {
+        UNAUTHORIZED: 'Credenciais inválidas!',
+        UNAUTHORIZED_DESC: 'Sua senha está incorreta',
 
+        MSG_NOT_FOUND: 'Usuário não encontrado',
+        DESC_NOT_FOUND: 'E-mail fornecido não corresponde a nenhum usuário cadastrado no sistema.',
     }
 
     public static readonly USERS: any = {
         DUPLICATED: 'Recurso duplicado',
         DUPLICATED_DESC: 'Já existe um usuário com este email cadastrado',
+
+        EMAIL_NOT_REQUIRED: "E-mail não pode ser atualizado.",
+        EMAIL_NOT_REQUIRED_DESC: "Não é possível atualizar o e-mail.",
 
         PASSWORD_NOT_REQUIRED: 'Rota para atualização de senha inválida.',
         PASSWORD_NOT_REQUIRED_DESC: 'A senha deve ser atualizada pela rota: /users/password',

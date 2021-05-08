@@ -5,6 +5,7 @@ import { Application } from 'express'
 import { notFoundHandler } from './ui/exception/exception.handler'
 import * as http from 'http'
 
+import { AuthController } from '@src/ui/controllers/auth.controller'
 import { GroupsController } from '@src/ui/controllers/groups.controller'
 import { UsersController } from '@src/ui/controllers/user.controller'
 import { QuestionnaireController } from '@src/ui/controllers/questionnaire.controller'
@@ -52,6 +53,7 @@ export class SetupServer extends Server {
     }
 
     private setupControllers(): void {
+        const authController = new AuthController()
         const groupsController = new GroupsController()
         const questionnaireController = new QuestionnaireController()
         const usersController = new UsersController()
@@ -59,6 +61,7 @@ export class SetupServer extends Server {
         
         // Add all controllers here
         const controllers: Array<object> = [
+            authController,
             groupsController,
             questionnaireController,
             usersController,
