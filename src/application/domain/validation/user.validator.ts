@@ -34,6 +34,13 @@ export abstract class UserValidator {
                 ObjectIdValidator.validate(user.id)
             }
 
+            if (user.email !== undefined) {
+                throw new ValidationException(
+                    Messages.USERS.EMAIL_NOT_REQUIRED,
+                    Messages.USERS.EMAIL_NOT_REQUIRED_DESC
+                )
+            }
+
             if (user.password !== undefined) {
                 throw new ValidationException(
                     Messages.USERS.PASSWORD_NOT_REQUIRED,
@@ -44,15 +51,15 @@ export abstract class UserValidator {
             if (user.name !== undefined) {
                 userIsEmpty = false
                 if (user.name === '') invalidFields.push('name')
-            } 
+            }
             if (user.email !== undefined) {
                 userIsEmpty = false
                 if (user.email === '') invalidFields.push('email')
-            } 
+            }
             if (user.institution !== undefined) {
                 userIsEmpty = false
                 if (user.institution === '') invalidFields.push('institution')
-            } 
+            }
 
             if (userIsEmpty) {
                 throw new ValidationException(
@@ -92,5 +99,4 @@ export abstract class UserValidator {
             throw err
         }
     }
-
 }

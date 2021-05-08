@@ -1,9 +1,10 @@
+import { NotFoundException, RepositoryException, ValidationException } from '@src/application/domain/exception/exceptions'
 import { User } from '@src/application/domain/model/user'
 import { IRepository } from '@src/application/port/repository.interface'
-import { UserEntityMapper } from '../entity/user.entity'
-import { UserRepoModel } from '../database/schema/user.schema'
-import { Exception, NotFoundException, RepositoryException, ValidationException } from '@src/application/domain/exception/exceptions'
 import { Messages } from '@src/utils/messages'
+import bcrypt from 'bcrypt'
+import { UserRepoModel } from '../database/schema/user.schema'
+import { UserEntityMapper } from '../entity/user.entity'
 
 class UsersRepository implements IRepository<User> {
     constructor(
@@ -14,6 +15,10 @@ class UsersRepository implements IRepository<User> {
     public create(user: User): Promise<User> {
         const newUser = this._userEntityMapper.transform(user)
 
+        if (newUser.password) {
+            newUser.password = this.encryptPassword(newUser.password)
+        }
+
         return new Promise<User>((resolve, reject) => {
             this._userRepoModel.create(newUser)
                 .then((result: any) => {
@@ -22,6 +27,10 @@ class UsersRepository implements IRepository<User> {
                     reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
                 })
         })
+    }
+
+    public encryptPassword(password: string): string {
+        return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
     }
 
     public async find(filters: object): Promise<User[]> {
@@ -43,6 +52,10 @@ class UsersRepository implements IRepository<User> {
                     reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
                 })
         })
+    }
+
+    public comparePasswords(passwordPlain: string, passwordHash: string): boolean {
+        return bcrypt.compareSync(passwordPlain, passwordHash)
     }
 
     public async updatePassword(user_id: string, old_password: string, new_password: string): Promise<boolean> {
