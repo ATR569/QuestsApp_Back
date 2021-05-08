@@ -50,6 +50,13 @@ export abstract class Messages {
 
     }
 
+    public static readonly ANSWERS_COMMENTS: any = {
+        AUTHOR_ID_NOT_PROVIDED: 'O id do autor do comentário não foi fornecido!',
+        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o autor do comentário não está registrado no sistema!',
+        INVALID_AUTHOR_ID: 'O id do autor não é válido.',
+
+    }
+
     public static readonly ERROR_MESSAGE: any = {
         INTERNAL_SERVER_ERROR: 'Erro interno do servidor!',
         REQUIRED_FIELDS: 'Alguns campos não foram fornecidos.',

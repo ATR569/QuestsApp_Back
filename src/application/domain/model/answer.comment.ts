@@ -1,45 +1,56 @@
 import { Entity } from './entity'
 import { IJSONTransformable } from './json.transformer.interface'
+import { User } from './User'
 
 export class AnswerComment extends Entity implements IJSONTransformable<AnswerComment> {
-    private _description?: string
-    private _score?: number
+    private _comment?: string
+    private _answerId?: string
+    private _author?: User
 
-    set description(description: string | undefined) {
-        this._description = description
+    set comment(comment: string | undefined) {
+        this._comment = comment
     }
 
-    set score(score: number | undefined) {
-        this._score = score
+    set answerId(answerId: string | undefined) {
+        this._answerId = answerId
     }
 
-    get description(): string | undefined{
-        return this._description
+    set author(author: User | undefined) {
+        this._author = author
     }
 
-    get score(): number | undefined{
-        return this._score
+    get comment(): string | undefined {
+        return this._comment
+    }
+
+    get answerId(): string | undefined {
+        return this._answerId
+    }
+
+    get author(): User | undefined {
+        return this._author
     }
 
     public toJSON(): object {
-        const json = {
+        return {
             id: this.id,
-            description: this.description,
-            score: this.score
+            comment: this.comment,
+            answerId: this.answerId,
+            author: this.author
         }
-
-        return json
     }
-    
+
     public fromJSON(json: any): AnswerComment {
-        if (json === undefined) {
-            json = {}
-        }
-
         if (json.id !== undefined) this.id = json.id
-        if (json.description !== undefined) this.description = json.description
-        if (json.score !== undefined) this.score = json.score
+        if (json.comment !== undefined) this.comment = json.comment
+        if (json.answerId !== undefined) this.answerId = json.answerId
+        if (json.author !== undefined) this.author = json.author
 
+        return this
+    }
+
+    public asNewEntity(): AnswerComment {
+        this.id = undefined
         return this
     }
 }
