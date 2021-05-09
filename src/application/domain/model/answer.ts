@@ -3,9 +3,11 @@ import { IJSONTransformable } from './json.transformer.interface'
 import { AnswerComment } from './answer.comment'
 
 export class Answer extends Entity implements IJSONTransformable<Answer> {
+
     private _description?: string
     private _score?: number
     private _comments?: Array<AnswerComment>
+    private _question_id?: string
 
     set description(description: string | undefined) {
         this._description = description
@@ -31,12 +33,21 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
         return this._comments
     }
 
+    set question_id(question_id: string | undefined){
+        this._question_id = question_id
+    }
+
+    get question_id(): string | undefined{
+        return this._question_id
+    }
+
     public toJSON(): object {
         const json = {
             id: this.id,
             description: this.description,
             score: this.score,
             comments: this.comments,
+            question_id: this.question_id
         }
 
         return json
@@ -53,7 +64,13 @@ export class Answer extends Entity implements IJSONTransformable<Answer> {
         if (json.comments !== undefined && json.comments instanceof Array) {
             this.comments = json.comments.map((comment: any) => new AnswerComment().fromJSON(comment))
         }
+        if (json.question_id !== undefined) this.question_id = json.question_id
+        
+        return this
+    }
 
+    public asNewEntity(): Answer {
+        this.id = undefined
         return this
     }
 }

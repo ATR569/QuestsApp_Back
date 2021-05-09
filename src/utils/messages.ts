@@ -47,6 +47,8 @@ export abstract class Messages {
 
     public static readonly ANSWERS: any = {
 
+        ALREADY_REGISTERED: 'Já existe uma resposta registrada com a descrição fornecida: {{0}}.'
+
     }
 
     public static readonly QUESTIONS: any = {
@@ -54,6 +56,13 @@ export abstract class Messages {
         CREATOR_ID_NOT_PROVIDED: 'O id do criador da questão não foi fornecido!',
         CREATOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
         ALREADY_REGISTERED: 'Já existe uma questão registrada com a descrição fornecida: { {0} }.'
+
+    }
+
+    public static readonly ANSWERS_COMMENTS: any = {
+        AUTHOR_ID_NOT_PROVIDED: 'O id do autor do comentário não foi fornecido!',
+        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o autor do comentário não está registrado no sistema!',
+        INVALID_AUTHOR_ID: 'O id do autor não é válido.',
 
     }
 

@@ -1,16 +1,25 @@
 import Mongoose, { Schema } from 'mongoose'
 
-interface IAnswerCommentModel extends Mongoose.Document { }
+interface IAnswerCommentModel extends Mongoose.Document {
+    name?: string
+    author?: string
+    answerId?: string
+}
 
 const answerCommentSchema = new Schema(
     {
-        description: {
+        comment: {
             type: String,
             required: 'A descrição do comentário é obrigatória!'
         },
-        score: {
-            type: Number
-        }
+        author: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        answerId: {
+            type: String,
+            required: 'grupo é obrigatório'
+        },
     },
     {
         toJSON: {
