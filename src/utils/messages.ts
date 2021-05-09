@@ -40,6 +40,8 @@ export abstract class Messages {
 
     public static readonly ANSWERS: any = {
 
+        ALREADY_REGISTERED: 'Já existe uma resposta registrada com a descrição fornecida: {{0}}.'
+
     }
 
     public static readonly QUESTIONS: any = {

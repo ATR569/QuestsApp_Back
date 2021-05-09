@@ -10,8 +10,8 @@ export abstract class AnswerCommentValidator {
         const missingFields = []
 
         try {
-            if (answerComment.comment == undefined) missingFields.push('disciplina')
-            else StringValidator.validate(answerComment.comment, 'discipline')
+            if (answerComment.comment == undefined) missingFields.push('comment')
+            else StringValidator.validate(answerComment.comment, 'comment')
 
             if (answerComment.answerId == undefined) missingFields.push('answerId')
             else ObjectIdValidator.validate(answerComment.answerId)

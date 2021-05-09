@@ -1,6 +1,10 @@
 import Mongoose, { Schema } from 'mongoose'
 
-interface IAnswerCommentModel extends Mongoose.Document { }
+interface IAnswerCommentModel extends Mongoose.Document {
+    name?: string
+    author?: string
+    answerId?: string
+}
 
 const answerCommentSchema = new Schema(
     {

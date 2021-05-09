@@ -1,6 +1,12 @@
 import Mongoose, { Schema } from 'mongoose'
+import { AnswerRepoModel } from './answer.schema'
 
-interface IQuestionModel extends Mongoose.Document { }
+interface IQuestionModel extends Mongoose.Document { 
+    description?: string
+    creator?: string
+    answers?: Array<string>
+
+}
 
 const questionSchema = new Schema(
     {
@@ -13,8 +19,8 @@ const questionSchema = new Schema(
             ref: 'User'
         },
         answers: [{
-            type: Schema.Types.ObjectId
-            /*ref: 'Answer'*/
+            type: Schema.Types.ObjectId,
+            ref: 'Answer'
         }]
     },
     {
@@ -28,5 +34,18 @@ const questionSchema = new Schema(
         }
     }
 )
+
+// When delete a group, all their questionnaires will be deleted too
+questionSchema.post('findOneAndDelete', function (doc: IQuestionModel) {
+    const filters = this.getFilter()
+    if (doc){
+        AnswerRepoModel
+            .deleteMany({ 
+                _id: { $in: doc.answers} 
+            })
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err))
+    }
+})
 
 export const QuestionRepoModel = Mongoose.model<IQuestionModel>('Question', questionSchema)
