@@ -68,4 +68,9 @@ export class Invite extends Entity implements IJSONTransformable<Invite>{
 
         return this
     }
+
+    public asNewEntity(): Invite {
+        this.id = undefined
+        return this
+    }
 }

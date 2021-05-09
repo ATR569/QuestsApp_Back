@@ -15,8 +15,11 @@ export abstract class Messages {
         USER_ID_NOT_PROVIDED: 'O id do usuário não foi fornecido!',
         INVALID_USER_ID: 'O id do usuário não é válido.',
         INVALID_STATUS: 'O status fornecido é inválido.',
-        INVALID_STATUS_DESC: 'O status tem que ser um dos seguintes valores: [ pendding, accepted, denied ].',
+        INVALID_STATUS_DESC: 'O status tem que ser um dos seguintes valores: [ pending, accepted, denied ].',
         FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.',
+        USER_ID_NOT_REGISTERED: 'O id fornecido para o usuário do convite não está registrado no sistema!',
+        GROUP_ID_NOT_REGISTERED: 'O id fornecido para o grupo não está registrado no sistema!',
+        ALREADY_REGISTERED: 'Já existe um convite registrado para o usuário entrar no grupo.',
     }
 
     public static readonly USERS: any = {

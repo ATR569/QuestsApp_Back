@@ -1,4 +1,4 @@
-import '../utils/module-alias'
+import '../../src/utils/module-alias'
 import { GroupsDBUtils } from '@test/utils/database/groups.db.utils'
 import { UserMock } from '@test/mocks/models/user.mock'
 import { GroupMock } from '@test/mocks/models/group.mock'

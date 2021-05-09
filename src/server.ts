@@ -11,6 +11,7 @@ import { QuestionnaireController } from '@src/ui/controllers/questionnaire.contr
 import { QuestionsController } from './ui/controllers/questions.controller'
 import { MongoDB } from './infrastructure/database/mongo.db'
 import cors from 'cors'
+import { InvitesController } from './ui/controllers/invites.controller'
 require('dotenv').config()
 
 const port_http = process.env.PORT_HTTP || 3001
@@ -56,13 +57,15 @@ export class SetupServer extends Server {
         const questionnaireController = new QuestionnaireController()
         const usersController = new UsersController()
         const questionsController = new QuestionsController()
+        const invitesController = new InvitesController()
         
         // Add all controllers here
         const controllers: Array<object> = [
             groupsController,
             questionnaireController,
             usersController,
-            questionsController
+            questionsController,
+            invitesController,
         ]
 
         this.addControllers(controllers)
