@@ -38,10 +38,11 @@ export class AnswerController {
      * @param {Response} res 
      * @returns {Answer}
      */
-    @Get(':answerID')
+    @Get(':answerId')
     public async getAnswerById(req: Request, res: Response): Promise<Response> {
         try {
-            const result = await answerService.getById(req.params.answerID)
+            
+            const result = await answerService.getById(req.params.answerId)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -56,10 +57,12 @@ export class AnswerController {
      * @param {Response} res 
      * @returns {answer}
      */
-    @Patch(':answerID/like')
+    @Patch(':answerId/like')
     public async updateLikeById(req: Request, res: Response): Promise<Response> {
         try {
+            const filters = { ...req.query }
             const answer = new Answer().fromJSON(req.body)
+            answer.id = req.params.answerId
             const result = await answerService.updateLike(answer)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
@@ -75,7 +78,7 @@ export class AnswerController {
      * @param {Response} res 
      * @returns {answer}
      */
-     @Patch(':answerID')
+     @Patch(':answerId')
      public async updateAnswerById(req: Request, res: Response): Promise<Response> {
          try {
              const answer = new Answer().fromJSON(req.body)
@@ -94,10 +97,10 @@ export class AnswerController {
      * @param {Request} req 
      * @param {Response} res 
      */
-    @Delete(':answerID')
+    @Delete(':answerId')
     public async removeAnswer(req: Request, res: Response): Promise<Response> {
         try {
-            const result = await answerService.remove(req.params.answerID)
+            const result = await answerService.remove(req.params.answerId)
             return res.status(HttpStatus.NO_CONTENT).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)

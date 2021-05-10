@@ -16,11 +16,13 @@ export class QuestionsController {
     * @returns 
     */
     @Post('')
-    public async createQuestion(req: Request, res: Response): Promise<Response> {
+    public async saveQuestion(req: Request, res: Response): Promise<Response> {
         try {
+            
             const question = new Question().fromJSON(req.body).asNewEntity()
-
+            
             const result = await questionService.add(question)
+
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -36,10 +38,10 @@ export class QuestionsController {
      * @param res 
      * @returns 
      */
-    @Get(':questionID')
+    @Get(':questionId')
     public async getQuestionsById(req: Request, res: Response): Promise<Response> {
         try {
-            const result = await questionService.getById(req.params.questionID)
+            const result = await questionService.getById(req.params.questionId)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -71,11 +73,11 @@ export class QuestionsController {
      * @param res 
      * @returns 
      */
-    @Get(':questionID/answer')
-    public async getAnswerByQuestionId(req: Request, res: Response): Promise<Response> {
+    @Get(':questionId/answer')
+    public async getAnswerByquestionId(req: Request, res: Response): Promise<Response> {
         try {
             const filters = { ...req.query }
-            const result = await questionService.getAllAnswers(req.params.questionID)
+            const result = await questionService.getAllAnswers(req.params.questionId)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -89,13 +91,15 @@ export class QuestionsController {
      * @param res 
      * @returns 
      */
-    @Patch(':questionID')
+    @Patch(':questionId')
     public async updateQuestionById(req: Request, res: Response): Promise<Response> {
         try {
+            const filters = { ...req.query }
             const question = new Question().fromJSON(req.body)
-            question.id = req.params.questionID
+            question.id = req.params.questionId
             
             const result = await questionService.update(question)
+            
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
@@ -109,33 +113,16 @@ export class QuestionsController {
      * @param res 
      * @returns 
      */
-    @Delete(':questionID')
+    @Delete(':questionId')
     public async removeQuestionById(req: Request, res: Response): Promise<Response> {
         try {
-            const result = await questionService.remove(req.params.questionID)
+            const result = await questionService.remove(req.params.questionId)
             return res.status(HttpStatus.NO_CONTENT).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
             return res.status(apiException.code).send(apiException)
         }
     }
-
-    /** Vai para answer
-     * Delete the answer by idquestion
-     * @param req 
-     * @param res 
-     * @returns 
-     */
-         @Delete(':questionID/answer/answerID')
-         public async removeAnswerById(req: Request, res: Response): Promise<Response> {
-             try {
-                 const result = await questionService.remove(req.params.questionID)
-                 return res.status(HttpStatus.NO_CONTENT).send(result)
-             } catch (err) {
-                 const apiException = ApiExceptionManager.build(err)
-                 return res.status(apiException.code).send(apiException)
-             }
-         }
 
 
 }

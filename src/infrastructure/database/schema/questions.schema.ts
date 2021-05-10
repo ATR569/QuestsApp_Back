@@ -4,8 +4,8 @@ import { QuestionnaireRepoModel } from './questionnaire.schema'
 
 interface IQuestionModel extends Mongoose.Document { 
     description?: string
+    questionnaireId?: string
     creator?: string
-    questionnaireID?: string
     answers?: Array<string>
 
 }
@@ -16,13 +16,13 @@ const questionSchema = new Schema(
             type: String,
             required: 'A descrição da pergunta é obrigatória!'
         },
+        questionnaireId: {
+            type: String,
+            required: 'O Id do questionário é obrigatório!'
+        },
         creator: {
             type: Schema.Types.ObjectId,
             ref: 'User'
-        },
-        questionnaireID: {
-            type: String,
-            required: 'O Id do questionário é obrigatório!'
         },
         answers: [{
             type: Schema.Types.ObjectId,
@@ -55,10 +55,11 @@ questionSchema.post('findOneAndDelete', function (doc: IQuestionModel) {
             .catch(err => Promise.reject(err))
     }
     //all their references will be deleted too
+    
     if (doc){
         QuestionnaireRepoModel
-            .deleteOne({ 
-                _questions: { $in: doc.questionnaireID} 
+            .findByIdAndUpdate({ 
+                _questions: { $in: doc.questionnaireId} 
             })
 
             .then(res => Promise.resolve(res))

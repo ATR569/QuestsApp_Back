@@ -5,9 +5,9 @@ import { QuestionRepoModel } from './questions.schema'
 
 interface IAnswerModel extends Mongoose.Document { 
     description?: string
-    creator?: string
+    author?: string
     score?: number
-    questionID?: string
+    questionId?: string
     answerComments?: Array<string>
 }
 
@@ -20,7 +20,7 @@ const answerSchema = new Schema(
         score: {
             type: Schema.Types.Number
         },
-        questionID: {
+        questionId: {
             type: String,
             required: 'O Id da questão é obrigatório!'
         },
@@ -44,8 +44,8 @@ const answerSchema = new Schema(
 )
 
 // Before delete a answer... all their references will be deleted too
-/*answerSchema.pre('findByIdAndDelete', function (doc:IAnswerModel)){
-    const filters = this.getFilter()
+/*answerSchema.pre('findOneAndDelete', function (doc:IAnswerModel)){
+    //const filters = this.getFilter()
     
     if (doc){
         QuestionRepoModel
@@ -54,10 +54,10 @@ const answerSchema = new Schema(
             .catch(err => Promise.reject(err))
     }
 
-}
-*/
+}*/
+
 // When delete a answer... all their comments will be deleted too
-answerSchema.post('findByIdAndDelete', function (doc: IAnswerModel) {
+answerSchema.post('findOneAndDelete', function (doc: IAnswerModel) {
     const filters = this.getFilter()
     if (doc){
         AnswerCommentRepoModel

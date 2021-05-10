@@ -15,9 +15,9 @@ class QuestionsRepository implements IRepository<Question> {
 
     public async create(question: Question): Promise<Question> {
         
-        const questionnaireId = question.questionnaireID
+        const questionnaireId = question.questionnaireId
         const newQuestion = this._questionEntityMapper.transform(question)
-
+        
         return new Promise<Question>((resolve, reject) => {
             this._questionRepoModel.create(newQuestion)
                 .then(async(result: any) => {
@@ -89,9 +89,9 @@ class QuestionsRepository implements IRepository<Question> {
 
 
     public async update(question: Question): Promise<Question> {
-
+        
         const questionUpd = this._questionEntityMapper.transform(question)
-        const update = { _description: questionUpd.description}    
+        const update = { description: questionUpd.description}    
         return new Promise<Question>((resolve, reject) => {
             
             this._questionRepoModel.findByIdAndUpdate(questionUpd.id , update, { new: true })
@@ -104,7 +104,7 @@ class QuestionsRepository implements IRepository<Question> {
                                 .replace('{description}', questionUpd.description))
                         )
                     
-                    return resolve(question)
+                    return resolve(result)
                 })
                 .catch((err: any) => reject(err))
         })

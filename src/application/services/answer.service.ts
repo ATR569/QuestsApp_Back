@@ -16,14 +16,14 @@ class AnswerService implements IService<Answer> {
             AnswerValidator.validateCreate(answer)
             
             //  Check if the user is registered
-            if (answer.creator !== undefined && answer.creator.id !== undefined) {
-                if (!(await usersRepository.checkExist({ _id: answer.creator.id })))
+            if (answer.author !== undefined && answer.author.id !== undefined) {
+                if (!(await usersRepository.checkExist({ _id: answer.author.id })))
                     throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                        Messages.ANSWERS.CREATOR_ID_NOT_REGISTERED)
+                        Messages.ANSWERS.author_ID_NOT_REGISTERED)
             }
             //  Check if the question is registered
-            if (answer.questionID !== undefined && answer.questionID !== undefined) {
-                if (!(await questionsRepository.checkExist({ _id: answer.questionID })))
+            if (answer.questionId !== undefined && answer.questionId !== undefined) {
+                if (!(await questionsRepository.checkExist({ _id: answer.questionId })))
                     throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                         Messages.ANSWERS.QUESTION_ID_NOT_REGISTERED)
             }        
@@ -40,14 +40,15 @@ class AnswerService implements IService<Answer> {
         return Promise.reject(new Error('Method not implemented. '))
     }
 
-    public async getById(answerID: string): Promise<Answer> {
-        ObjectIdValidator.validate(answerID)
+    public async getById(answerId: string): Promise<Answer> {
+        ObjectIdValidator.validate(answerId)
 
-        return answersRepository.findOne(answerID)
+        return answersRepository.findOne(answerId)
     }
 
     public async updateLike(answer: Answer): Promise<Answer> {
         try {
+            
             ObjectIdValidator.validate(answer.id!)
 
             if (!(await answersRepository.checkExist({ _id: answer.id })))
