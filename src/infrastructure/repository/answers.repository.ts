@@ -1,10 +1,10 @@
+import { NotFoundException, RepositoryException } from '@src/application/domain/exception/exceptions'
 import { Answer } from '@src/application/domain/model/answer'
 import { IRepository } from '@src/application/port/repository.interface'
-import { AnswerEntityMapper } from '../entity/answer.entity'
-import { AnswerRepoModel } from '../database/schema/answer.schema'
-import { NotFoundException, RepositoryException } from '@src/application/domain/exception/exceptions'
 import { Messages } from '@src/utils/messages'
+import { AnswerRepoModel } from '../database/schema/answer.schema'
 import { QuestionRepoModel } from '../database/schema/questions.schema'
+import { AnswerEntityMapper } from '../entity/answer.entity'
 
 class AnswersRepository implements IRepository<Answer> {
     constructor(
@@ -14,18 +14,18 @@ class AnswersRepository implements IRepository<Answer> {
     ) { }
 
     public async create(answer: Answer): Promise<Answer> {
+        const questionId = answer.questionId
         const newAnswer = this._answerEntityMapper.transform(answer)
         newAnswer.score = 0
-        const questionid = "answer.question_id"
-        console.log(newAnswer)
+
         return new Promise<Answer>((resolve, reject) => {
 
             this._answerRepoModel.create(newAnswer)
-                .then((result: any) => {
-                    console.log(questionid + 'id da questao')
-                    const update = { $push: { answers: result._id } }
+                .then(async (result: any) => {
 
-                    this._questionRepoModel.findOneAndUpdate({ _id: questionid }, update, { new: true })
+                    const update = { $push: { answers: result.id } }
+
+                    await this._questionRepoModel.findByIdAndUpdate(questionId, update, { new: true })
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => {
@@ -58,7 +58,8 @@ class AnswersRepository implements IRepository<Answer> {
                     }
 
                     const answer: any = this._answerEntityMapper.transform(result)
-                    return resolve(answer)
+
+                    return resolve(result)
                 })
                 .catch((err: any) => {
                     reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
@@ -66,12 +67,12 @@ class AnswersRepository implements IRepository<Answer> {
         })
     }
 
-    public async update(answer: Answer): Promise<Answer> {
+    public async updateLike(answer: Answer): Promise<Answer> {
         const answerUpd = this._answerEntityMapper.transform(answer)
         const update = { $inc: { score: 1 } }
         return new Promise<Answer>((resolve, reject) => {
 
-            this._answerRepoModel.findOneAndUpdate({ _id: answerUpd.id }, update, { new: true })
+            this._answerRepoModel.findByIdAndUpdate(answerUpd.id, update, { new: true })
                 .then((result: any) => {
                     if (!result)
                         return reject(new NotFoundException(
@@ -80,8 +81,30 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{recurso}', 'answer')
                                 .replace('{score}', answerUpd.score))
                         )
-
+                    //console.log(result)
                     return resolve(answer)
+                })
+                .catch((err: any) => reject(err))
+        })
+    }
+
+    public async update(answer: Answer): Promise<Answer> {
+
+        const answerUpd = this._answerEntityMapper.transform(answer)
+        const update = { description: answerUpd.description }
+        return new Promise<Answer>((resolve, reject) => {
+
+            this._answerRepoModel.findByIdAndUpdate(answerUpd.id, update, { new: true })
+                .then((result: any) => {
+                    if (!result)
+                        return reject(new NotFoundException(
+                            Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND
+                                .replace('{recurso}', 'answer')
+                                .replace('{description}', answerUpd.description))
+                        )
+
+                    return resolve(result)
                 })
                 .catch((err: any) => reject(err))
         })
@@ -89,8 +112,12 @@ class AnswersRepository implements IRepository<Answer> {
 
     public async delete(id: string): Promise<Answer> {
         return new Promise<Answer>((resolve, reject) => {
+            //falta apagar referencias
+
             this._answerRepoModel.findOneAndDelete({ _id: id })
                 .then((result: any) => {
+
+
                     return resolve(new Answer())
                 })
                 .catch((err: any) => reject(err))
@@ -105,7 +132,6 @@ class AnswersRepository implements IRepository<Answer> {
 
         return new Promise<boolean>((resolve, reject) => {
             this._answerRepoModel.findOne(filters)
-                // .then((result: any) => console.log(result))
                 .then((result: any) => resolve(!!result))
                 .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
         })

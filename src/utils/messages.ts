@@ -47,7 +47,8 @@ export abstract class Messages {
 
     public static readonly ANSWERS: any = {
 
-        ALREADY_REGISTERED: 'Já existe uma resposta registrada com a descrição fornecida: {{0}}.'
+        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
+        QUESTION_ID_NOT_REGISTERED: 'O id fornecido para a questão da resposta não está registrado no sistema!',
 
     }
 
@@ -55,6 +56,7 @@ export abstract class Messages {
 
         CREATOR_ID_NOT_PROVIDED: 'O id do criador da questão não foi fornecido!',
         CREATOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
+        QUESTIONNAIRE_ID_NOT_REGISTERED: 'O id fornecido para o questionário da questão não está registrado no sistema!',
         ALREADY_REGISTERED: 'Já existe uma questão registrada com a descrição fornecida: { {0} }.'
 
     }
