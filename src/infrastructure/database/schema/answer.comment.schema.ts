@@ -1,4 +1,5 @@
 import Mongoose, { Schema } from 'mongoose'
+import { AnswerRepoModel } from './answer.schema'
 
 interface IAnswerCommentModel extends Mongoose.Document {
     name?: string
@@ -32,5 +33,14 @@ const answerCommentSchema = new Schema(
         }
     }
 )
+
+answerCommentSchema.post('findOneAndDelete', function (doc: IAnswerCommentModel) {
+    if (doc) {
+        AnswerRepoModel
+            .findByIdAndUpdate({ _id: doc.answerId }, { $pull: { answerComments: doc._id } })
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err))
+    }
+})
 
 export const AnswerCommentRepoModel = Mongoose.model<IAnswerCommentModel>('AnswerComment', answerCommentSchema)
