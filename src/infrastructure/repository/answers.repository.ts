@@ -57,7 +57,7 @@ class AnswersRepository implements IRepository<Answer> {
                             Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'reposta').replace('{id}', id)))
                     }
                     
-                    const answer: any = this._answerEntityMapper.transform(result)
+                    
                     
                     return resolve(result)
                 })
@@ -81,8 +81,8 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{recurso}', 'answer')
                                 .replace('{score}', answerUpd.score))
                         )
-                    //console.log(result)
-                    return resolve(answer)
+                    
+                    return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => reject(err))
         })
@@ -104,7 +104,7 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{description}', answerUpd.description))
                         )
                     
-                    return resolve(result)
+                    return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => reject(err))
         })

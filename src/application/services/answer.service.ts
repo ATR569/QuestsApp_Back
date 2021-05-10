@@ -37,7 +37,11 @@ class AnswerService implements IService<Answer> {
     }
 
     public async getAll(filters: object): Promise<Answer[]> {
-        return Promise.reject(new Error('Method not implemented. '))
+        try {
+            return answersRepository.find(filters)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
     public async getById(answerId: string): Promise<Answer> {
