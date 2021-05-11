@@ -22,24 +22,31 @@ export class SetupServer extends Server {
     private server?: http.Server
     private mongoUri: string
     private port: any
+    private isRunning: boolean
 
-    constructor(){
+    constructor() {
         super()
         this.mongoUri = mongoUri
         this.port = port_http
+        this.isRunning = false
     }
 
     public init(): void {
-        this.setupExpress()
-        this.setupControllers()
-        this.setupErrorsHandler()
-        this.setupDatabase()
+        if (!this.isRunning) {
+            this.setupExpress()
+            this.setupControllers()
+            this.setupErrorsHandler()
+            this.setupDatabase()
+        }
     }
 
     public start(): void {
-        this.server = this.app.listen(this.port, () => {
-            console.log('Server listening on port: ' + this.port)
-        })
+        if (!this.isRunning) {
+            this.server = this.app.listen(this.port, () => {
+                this.isRunning = true
+                console.log('Server listening on port: ' + this.port)
+            })
+        }
     }
 
     private setupErrorsHandler(): void {
@@ -49,7 +56,7 @@ export class SetupServer extends Server {
 
     private setupExpress(): void {
         this.app.use(bodyParser.json())
-        this.app.use(cors({origin: '*'}))
+        this.app.use(cors({ origin: '*' }))
     }
 
     private setupControllers(): void {
@@ -58,7 +65,7 @@ export class SetupServer extends Server {
         const usersController = new UsersController()
         const questionsController = new QuestionsController()
         const invitesController = new InvitesController()
-        
+
         // Add all controllers here
         const controllers: Array<object> = [
             groupsController,

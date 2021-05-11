@@ -1,6 +1,6 @@
 import HttpStatus from 'http-status-codes'
 import { Controller, Delete, Get, Patch, Post } from '@overnightjs/core'
-import { Invite } from '@src/application/domain/model/invite'
+import { Invite, InviteStatus } from '@src/application/domain/model/invite'
 import { Request, Response } from 'express'
 import { invitesService } from '@src/application/services/invites.service'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
@@ -14,11 +14,12 @@ export class InvitesController {
      * @param {Response} res 
      * @returns {Invite}
      */
-     @Post('')
+    @Post('')
     public async saveInvite(req: Request, res: Response): Promise<Response> {
         try {
             const invite = new Invite().fromJSON(req.body).asNewEntity()
-            
+            invite.status = InviteStatus.PENDING
+
             const result = await invitesService.add(invite)
 
             return res.status(HttpStatus.CREATED).send(result)
@@ -37,7 +38,7 @@ export class InvitesController {
     public async updateStatus(req: Request, res: Response): Promise<Response> {
         return res.status(HttpStatus.OK).send([new Invite().fromJSON(req.body).toJSON()])
     }
-    
+
     @Delete(':invite_id')
     public async deleteInvite(req: Request, res: Response): Promise<Response> {
         return res.status(HttpStatus.NO_CONTENT).send({})

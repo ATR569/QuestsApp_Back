@@ -27,4 +27,23 @@ export abstract class ExceptionsMock {
         ERROR_400_ADMIN_CANT_BE_REMOVED: new ApiException(HttpStatus.BAD_REQUEST, Messages.GROUPS.MEMBER_NOT_REMOVED,
             Messages.GROUPS.ADMIN_CANT_BE_REMOVED).toJSON(),
     }
+
+    public static readonly INVITE: any = {
+        ERROR_409_ALREADY_EXISTING_INVITE: new ApiException(HttpStatus.CONFLICT,
+            Messages.INVITES.ALREADY_REGISTERED).toJSON(),
+        ERROR_409_USER_ALREADY_IN_GROUP: new ApiException(HttpStatus.CONFLICT,
+            Messages.GROUPS.USER_IS_ALREADY_A_MEMBER).toJSON(),
+        ERROR_404_USER_NOT_REGISTERED: new ApiException(HttpStatus.NOT_FOUND,
+            Messages.ERROR_MESSAGE.MSG_NOT_FOUND, Messages.INVITES.USER_ID_NOT_REGISTERED).toJSON(),
+        ERROR_404_GROUP_NOT_REGISTERED: new ApiException(HttpStatus.NOT_FOUND,
+            Messages.ERROR_MESSAGE.MSG_NOT_FOUND, Messages.INVITES.GROUP_ID_NOT_REGISTERED).toJSON(),
+        ERROR_400_INVALID_USER_ID: new ApiException(HttpStatus.BAD_REQUEST,
+            Messages.INVITES.INVALID_USER_ID, Messages.ERROR_MESSAGE.INVALID_ID_DESC).toJSON(),
+        ERROR_400_INVALID_GROUP_ID: new ApiException(HttpStatus.BAD_REQUEST,
+            Messages.INVITES.INVALID_GROUP_ID, Messages.ERROR_MESSAGE.INVALID_ID_DESC).toJSON(),
+        ERROR_400_USER_ID_NOT_PROVIDED: new ApiException(HttpStatus.BAD_REQUEST,
+            Messages.ERROR_MESSAGE.REQUIRED_FIELDS, Messages.INVITES.USER_ID_NOT_PROVIDED).toJSON(),
+        ERROR_400_GROUP_ID_NOT_PROVIDED: new ApiException(HttpStatus.BAD_REQUEST,
+            Messages.ERROR_MESSAGE.REQUIRED_FIELDS, Messages.INVITES.GROUP_ID_NOT_PROVIDED).toJSON(),
+    }
 }

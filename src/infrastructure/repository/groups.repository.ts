@@ -119,6 +119,11 @@ class GroupsRepository implements IRepository<Group> {
         })
     }
 
+    public async checkMember(groupId: string, userId: string): Promise<boolean> {
+        const filters = { _id: groupId, members: userId } 
+        return this.checkExist(filters)
+    }
+
     public async checkAdmin(groupId: string, memberId: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this._groupRepoModel.findOne({ _id: groupId })

@@ -3,17 +3,15 @@ import { GroupsDBUtils } from '@test/utils/database/groups.db.utils'
 import { UserMock } from '@test/mocks/models/user.mock'
 import { GroupMock } from '@test/mocks/models/group.mock'
 import { UsersDBUtils } from '@test/utils/database/user.db.utils'
-import { SetupServer } from '@src/server'
 import supertest from 'supertest'
 import HttpStatus from 'http-status-codes'
 import { expect } from 'chai'
 import { ExceptionsMock } from '../mocks/exceptions.mock'
 import { ObjectID } from 'bson'
-
+import { server } from '@test/utils/database/connection.db'
 
 describe('Routes: Groups', () => {
     const URI = '/groups'
-    const server = new SetupServer()
     const request = supertest(server.getApp())
 
     const group = new GroupMock()
@@ -68,7 +66,7 @@ describe('Routes: Groups', () => {
         })
 
         context('When creates a group successfully.', () => {
-            it('groups.post001: should return status code 200 and the created group.', () => {
+            it('groups.post001: should return status code 201 and the created group.', () => {
                 const body = group.toJSON()
 
                 return request.post(URI)

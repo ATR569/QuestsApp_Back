@@ -13,10 +13,6 @@ class InvitesService implements IService<Invite> {
             //  Validate the Invite
             InviteValidator.validateCreate(invite)
 
-            //  Check duplicate
-            if ((await invitesRepository.checkExist(invite)))
-                throw new ConflictException(Messages.INVITES.ALREADY_REGISTERED.replace('{0}', Invite.name))
-
             //  Check if the user is registered
             if (invite.user !== undefined && invite.user.id !== undefined) {
                 if (!(await usersRepository.checkExist({ _id: invite.user.id })))
@@ -31,7 +27,15 @@ class InvitesService implements IService<Invite> {
                         Messages.INVITES.GROUP_ID_NOT_REGISTERED)
             }
 
-            //  Creates the invite
+            //  Check duplicate
+            if ((await invitesRepository.checkExist(invite)))
+                throw new ConflictException(Messages.INVITES.ALREADY_REGISTERED)
+
+            //  Check if the user alread belongs to the group
+            if ((await groupsRepository.checkMember(invite.group!.id!, invite.user!.id!)))
+                throw new ConflictException(Messages.GROUPS.USER_IS_ALREADY_A_MEMBER)
+
+                //  Creates the invite
             return invitesRepository.create(invite)
         } catch (err) {
             return Promise.reject(err)

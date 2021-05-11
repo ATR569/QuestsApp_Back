@@ -44,6 +44,7 @@ export abstract class Messages {
         FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.',
         MEMBER_NOT_REMOVED: 'Membro do grupo não removido.',
         ADMIN_CANT_BE_REMOVED: 'O admininstrador do grupo não pode ser removido.',
+        USER_IS_ALREADY_A_MEMBER: 'O usuário já é membro do grupo.',
     }
 
     public static readonly QUESTIONNAIRES: any = {
