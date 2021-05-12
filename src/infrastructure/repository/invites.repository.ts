@@ -26,7 +26,23 @@ class InvitesRepository implements IRepository<Invite> {
     }
 
     public async find(filters: object): Promise<Array<Invite>> {
-        throw new Error('Method not implemented.')
+        return new Promise<Array<Invite>>((resolve, reject) => {
+            this._inviteRepoModel.find(filters)
+                .populate({
+                    path: 'group',
+                    populate: [
+                        { path: 'administrator' },
+                        { path: 'members' }
+                    ],
+                })
+                .populate('user')
+                .then((result: any) => {
+                    return resolve(result.map((item: any) => this._inviteEntityMapper.transform(item)))
+                })
+                .catch((err: any) => {
+                    return reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
+                })
+        })
     }
 
     public async findOne(id: string): Promise<Invite> {
@@ -35,8 +51,8 @@ class InvitesRepository implements IRepository<Invite> {
                 .populate({
                     path: 'group',
                     populate: [
-                        { path: 'administrator'}, 
-                        { path: 'members'}
+                        { path: 'administrator' },
+                        { path: 'members' }
                     ],
                 })
                 .populate('user')
@@ -52,7 +68,8 @@ class InvitesRepository implements IRepository<Invite> {
                 .catch((err: any) => {
                     reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
                 })
-        })    }
+        })
+    }
 
     public async update(invite: Invite): Promise<Invite> {
         throw new Error('Method not implemented.')
@@ -70,7 +87,7 @@ class InvitesRepository implements IRepository<Invite> {
         const filters = {
             group: invite.group?.id,
             user: invite.user?.id,
-            status: {$in: [InviteStatus.PENDING, InviteStatus.ACCEPTED ]}
+            status: { $in: [InviteStatus.PENDING, InviteStatus.ACCEPTED] }
         }
 
         return new Promise<boolean>((resolve, reject) => {

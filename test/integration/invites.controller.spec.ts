@@ -13,6 +13,7 @@ import { InviteStatus } from '@src/application/domain/model/invite'
 import { User } from '@src/application/domain/model/User'
 import { Group } from '@src/application/domain/model/group'
 import { server } from '@test/utils/database/connection.db'
+import { ObjectID } from 'bson'
 
 describe('Routes: Invites', () => {
     const URI = '/invites'
@@ -208,9 +209,9 @@ describe('Routes: Invites', () => {
                     wrongInvite.group = group
                     wrongInvite.user = new User()
                     wrongInvite.user.id = '123456'
-    
+
                     const body = wrongInvite.toJSON()
-    
+
                     return request.post(URI)
                         .send(body)
                         .set('Content-Type', 'application/json')
@@ -219,14 +220,14 @@ describe('Routes: Invites', () => {
                             expect(res.body).to.eql(ExceptionsMock.INVITE.ERROR_400_INVALID_USER_ID)
                         })
                 })
-    
+
                 it('invites.post006: should return an error 400 and an info message for invalid group id.', () => {
                     wrongInvite.group = new Group()
                     wrongInvite.user = user
                     wrongInvite.group.id = '123456'
-    
+
                     const body = wrongInvite.toJSON()
-    
+
                     return request.post(URI)
                         .send(body)
                         .set('Content-Type', 'application/json')
@@ -241,9 +242,9 @@ describe('Routes: Invites', () => {
                 it('invites.post007: should return an error 400 and an info message for user id not provided.', () => {
                     wrongInvite.user = undefined
                     wrongInvite.group = group
-    
+
                     const body = wrongInvite.toJSON()
-    
+
                     return request.post(URI)
                         .send(body)
                         .set('Content-Type', 'application/json')
@@ -257,9 +258,9 @@ describe('Routes: Invites', () => {
                     wrongInvite.user = new User()
                     wrongInvite.group = group
                     wrongInvite.user.id = undefined
-    
+
                     const body = wrongInvite.toJSON()
-    
+
                     return request.post(URI)
                         .send(body)
                         .set('Content-Type', 'application/json')
@@ -272,9 +273,9 @@ describe('Routes: Invites', () => {
                 it('invites.post009: should return an error 400 and an info message for group id not provided.', () => {
                     wrongInvite.user = user
                     wrongInvite.group = undefined
-    
+
                     const body = wrongInvite.toJSON()
-    
+
                     return request.post(URI)
                         .send(body)
                         .set('Content-Type', 'application/json')
@@ -288,9 +289,9 @@ describe('Routes: Invites', () => {
                     wrongInvite.user = user
                     wrongInvite.group = new Group()
                     wrongInvite.group.id = undefined
-    
+
                     const body = wrongInvite.toJSON()
-    
+
                     return request.post(URI)
                         .send(body)
                         .set('Content-Type', 'application/json')
@@ -299,6 +300,108 @@ describe('Routes: Invites', () => {
                             expect(res.body).to.eql(ExceptionsMock.INVITE.ERROR_400_GROUP_ID_NOT_PROVIDED)
                         })
                 })
+            })
+        })
+    })
+
+    describe('GET /invites', () => {
+        context('When there are invites registered.', () => {
+            before(async () => {
+                try {
+                    await UsersDBUtils.saveUser(user.toJSON())
+                        .then(res => user.id = res.id)
+                    await UsersDBUtils.saveUser(anotherUser.toJSON())
+                        .then(res => anotherUser.id = res.id)
+                    await GroupsDBUtils.saveGroup(group.toJSON())
+                        .then(res => group.id = res.id)
+                    await InvitesDBUtils.saveInvite({ group: invite.group!.id, user: invite.user!.id, status: InviteStatus.PENDING })
+                        .then(res => invite.id = res.id)
+                } catch (err) {
+                    console.log('Failure on before tests for GET /invites', err.message)
+                }
+            })
+
+            after(async () => {
+                try {
+                    await UsersDBUtils.removeAllUsers()
+                    await GroupsDBUtils.removeAllGroups()
+                    await InvitesDBUtils.removeAllInvites()
+                } catch (err) {
+                    console.log('Failure on afterEach tests for GET /invites', err.message)
+                }
+            })
+
+            it('invites.get_all001: should return status 200 and the list of invites.', () => {
+                return request.get(URI)
+                    .set('Content-Type', 'application/json')
+                    .expect(HttpStatus.OK)
+                    .then(res => {
+                        expect(res.body).instanceOf(Array)
+                        expect(res.body).length(1)
+
+                        expect(res.body[0]).haveOwnProperty('group')
+                        expect(res.body[0].group).to.haveOwnProperty('id', group.id)
+                        expect(res.body[0].group).to.haveOwnProperty('name', group.name)
+                        expect(res.body[0].group).to.haveOwnProperty('administrator')
+                        expect(res.body[0].group).to.haveOwnProperty('members')
+                        expect(res.body[0].group).to.haveOwnProperty('questionnaires')
+
+                        expect(res.body[0]).haveOwnProperty('user')
+                        expect(res.body[0].user).to.haveOwnProperty('id', anotherUser.id)
+                        expect(res.body[0].user).to.haveOwnProperty('name', anotherUser.name)
+                        expect(res.body[0].user).to.haveOwnProperty('email', anotherUser.email)
+                        expect(res.body[0].user).to.haveOwnProperty('institution', anotherUser.institution)
+
+                        expect(res.body[0]).to.haveOwnProperty('status', InviteStatus.PENDING)
+                    })
+            })
+
+            it('invites.get_all002: should return status 200 and the list of invites that match to the query.', () => {
+                return request.get(URI)
+                    .set('Content-Type', 'application/json')
+                    .query({ user: anotherUser.id })
+                    .expect(HttpStatus.OK)
+                    .then(res => {
+                        expect(res.body).instanceOf(Array)
+                        expect(res.body).length(1)
+
+                        expect(res.body[0]).haveOwnProperty('group')
+                        expect(res.body[0].group).to.haveOwnProperty('id', group.id)
+                        expect(res.body[0].group).to.haveOwnProperty('name', group.name)
+                        expect(res.body[0].group).to.haveOwnProperty('administrator')
+                        expect(res.body[0].group).to.haveOwnProperty('members')
+                        expect(res.body[0].group).to.haveOwnProperty('questionnaires')
+
+                        expect(res.body[0]).haveOwnProperty('user')
+                        expect(res.body[0].user).to.haveOwnProperty('id', anotherUser.id)
+                        expect(res.body[0].user).to.haveOwnProperty('name', anotherUser.name)
+                        expect(res.body[0].user).to.haveOwnProperty('email', anotherUser.email)
+                        expect(res.body[0].user).to.haveOwnProperty('institution', anotherUser.institution)
+
+                        expect(res.body[0]).to.haveOwnProperty('status', InviteStatus.PENDING)
+                    })
+            })
+
+            it('invites.get_all003: should return status 200 and the an empty list when there is no invites that match to the query.', () => {
+                return request.get(URI)
+                    .set('Content-Type', 'application/json')
+                    .query({ user: new ObjectID().toHexString() })
+                    .expect(HttpStatus.OK)
+                    .then(res => {
+                        expect(res.body).instanceOf(Array)
+                        expect(res.body).length(0)
+                    })
+            })
+        })
+
+        context('When there are no invites registered.', () => {
+            it('invites.get_all004: should return status 200 and an empty list.', () => {
+                return request.get(URI)
+                    .set('Content-Type', 'application/json')
+                    .expect(HttpStatus.OK)
+                    .then(res => {
+                        expect(res.body).to.eql([])
+                    })
             })
         })
     })

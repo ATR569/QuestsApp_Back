@@ -43,7 +43,11 @@ class InvitesService implements IService<Invite> {
     }
 
     public async getAll(filters: object): Promise<Array<Invite>> {
-        throw new Error('Method not implemented. service.getAll')
+        try {
+            return invitesRepository.find(filters)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
     public async getById(id: string): Promise<Invite> {

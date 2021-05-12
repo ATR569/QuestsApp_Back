@@ -31,7 +31,14 @@ export class InvitesController {
 
     @Get('')
     public async getAllInvites(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.OK).send([new Invite().fromJSON(req.body).toJSON()])
+        try {
+            const filters = { ...req.query }
+            const result = await invitesService.getAll(filters)
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     @Patch(':invite_id')
