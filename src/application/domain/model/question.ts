@@ -5,8 +5,10 @@ import { User } from './User'
 
 export class Question extends Entity implements IJSONTransformable<Question> {
     private _description?: string
+    private _questionnaireId?: string
     private _creator?: User
     private _answers?: Array<Answer>
+    
 
     get description() : string | undefined{
         return this._description
@@ -32,20 +34,32 @@ export class Question extends Entity implements IJSONTransformable<Question> {
         this._answers = answers
     }
     
+    set questionnaireId(questionnaireId: string | undefined){
+        this._questionnaireId = questionnaireId
+    }
+
+    get questionnaireId(): string | undefined{
+        return this._questionnaireId
+    }
+
     public toJSON(): object {
         return {
             id: this.id,
             description: this.description,
+            questionnaireId: this.questionnaireId,
             creator: this.creator,
             answers: this.answers
+            
         }
     }
 
     public fromJSON(json: any): Question {
         if (json.id !== undefined) this.id = json.id
         if (json.description !== undefined) this.description = json.description
+        if (json.questionnaireId !== undefined) this._questionnaireId = json.questionnaireId
         if (json.creator !== undefined) this.creator = json.creator
         if (json.answers !== undefined) this.answers = json.answers
+        
 
         return this
     }

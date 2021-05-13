@@ -1,17 +1,42 @@
-import { Question } from '../domain/model/question';
 import { IService } from '@src/application/port/service.interface';
-import { questionsRepository } from '@src/infrastructure/repository/questions.repository'
-import { usersRepository } from '@src/infrastructure/repository/user.repository'
-import { QuestionValidator } from '../domain/validation/question.validator';
-import { ConflictException, NotFoundException } from '../domain/exception/exceptions';
+import { questionnairesRepository } from '@src/infrastructure/repository/questionnaires.repository';
+import { questionsRepository } from '@src/infrastructure/repository/questions.repository';
+import { usersRepository } from '@src/infrastructure/repository/user.repository';
 import { Messages } from '@src/utils/messages';
+import { NotFoundException } from '../domain/exception/exceptions';
+import { Answer } from '../domain/model/answer';
+import { Question } from '../domain/model/question';
 import { ObjectIdValidator } from '../domain/validation/object.id.validator';
+import { QuestionValidator } from '../domain/validation/question.validator';
 
 
 class QuestionService implements IService<Question> {
 
     public async add(question: Question): Promise<Question> {
-        return Promise.reject(new Error('Method not implemented.'))
+         
+        try {
+            
+            QuestionValidator.validateCreate(question)
+
+
+            //  Check if the user is registered
+            if (question.creator !== undefined && question.creator!.id !== undefined) {
+                if (!(await usersRepository.checkExist({ _id: question.creator!.id })))
+                    throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                        Messages.QUESTIONS.CREATOR_ID_NOT_REGISTERED)
+            }
+
+            //  Check if the question is registered
+            if (question.questionnaireId !== undefined && question.questionnaireId === '') {
+                if (!(await questionnairesRepository.checkExist({ _id: question.questionnaireId })))
+                    throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                        Messages.QUESTIONS.QUESTIONNAIRE_ID_NOT_REGISTERED)
+            }  
+            //Creates the question
+            return questionsRepository.create(question)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
     public async getAll(filters: object): Promise<Question[]> {
@@ -22,22 +47,41 @@ class QuestionService implements IService<Question> {
         }
     }
 
-    public async getById(question_id: string): Promise<Question> {
-        ObjectIdValidator.validate(question_id)
 
-        return questionsRepository.findOne(question_id)
+    public async getById(questionId: string): Promise<Question> {
+        
+
+        return questionsRepository.findOne(questionId)
     }
 
-    public async update(item: Question): Promise<Question> {
-        return Promise.reject(new Error('Method not implemented.'))
-    }
+    public async update(question: Question): Promise<Question> {
+        try {
+            QuestionValidator.validateUpdate(question)
 
+            
+            //  Check if the question is registered
+            if (question.questionnaireId !== undefined && question.questionnaireId === '') {
+                if (!(await questionnairesRepository.checkExist({ _id: question.questionnaireId })))
+                    throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                        Messages.QUESTIONS.QUESTIONNAIRE_ID_NOT_REGISTERED)
+            }   
+            
+            return questionsRepository.update(question)
+        } catch (err) {
+            return Promise.reject(err)
+        }
+
+    }
+    
     public async remove(id: string): Promise<Question> {
+        ObjectIdValidator.validate(id)
         return questionsRepository.delete(id)
     }
 
-    public async getAllAnswers(group_id: string): Promise<Array<object>> {
-        return Promise.reject(new Error('Method not implemented. Get all answers from questions'))
+    public async getAllAnswers(questionId: string): Promise<Array<Answer>> {
+        ObjectIdValidator.validate(questionId)
+
+        return questionsRepository.getAnswers(questionId)
     }
 }
 

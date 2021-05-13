@@ -1,53 +1,50 @@
 import { ValidationException } from '../exception/exceptions'
-import { Question } from '../model/question'
+import { Answer } from '../model/answer'
 import { Messages } from '@src/utils/messages'
 import { ObjectIdValidator } from './object.id.validator'
 
-export abstract class QuestionValidator {
+export abstract class AnswerValidator {
 
-    public static validateCreate(question: Question): void | ValidationException {
+    public static validateCreate(answer: Answer): void | ValidationException {
         const missingFields: Array<string> = []
-        
+
         try {
-            if (question.description === undefined){ 
-
-                missingFields.push('description')
-
-            } else if (question.description === '') {
+            if (answer.description === undefined) missingFields.push('description')
+            else if (answer.description === '') {
                 throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                     Messages.ERROR_MESSAGE.INVALID_FIELDS_DESC.replace('{0}', 'description'))
             }
 
-            if (question.creator === undefined) {
+            if (answer.author === undefined) {
+                missingFields.push('author')
 
-                missingFields.push('creator')
-
-            } else if (question.creator.id === undefined) {
+            } else if (answer.author.id === undefined) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
-                    Messages.QUESTIONS.CREATOR_ID_NOT_PROVIDED)
+                    Messages.ANSWERS.AUTHOR_ID_NOT_PROVIDED)
             } else {
                 try {
-                    ObjectIdValidator.validate(question.creator.id)
+                    ObjectIdValidator.validate(answer.author.id)
                 } catch (err) {
                     throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                         Messages.ERROR_MESSAGE.INVALID_ID)
                 }
             }
 
-            
-            if (question.questionnaireId === undefined) {
-                missingFields.push('questionnaireId')
+            if (answer.questionId === undefined) {
+                missingFields.push('questionId')
+
+            } else if (answer.questionId === undefined) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
-                    Messages.QUESTIONS.QUESTIONNAIRE_ID_NOT_PROVIDED)
+                    Messages.ANSWERS.author_ID_NOT_PROVIDED)
             } else {
                 try {
-                    ObjectIdValidator.validate(question.questionnaireId)
+                    ObjectIdValidator.validate(answer.questionId)
                 } catch (err) {
                     throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                         Messages.ERROR_MESSAGE.INVALID_ID)
                 }
             }
-            
+
             if (missingFields.length > 0) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
                     Messages.ERROR_MESSAGE.REQUIRED_FIELDS_DESC.replace('{0}', missingFields.join(', ')))
@@ -57,17 +54,17 @@ export abstract class QuestionValidator {
         }
     }
 
-    public static validateUpdate(question: Question): void | ValidationException {
+    public static validateUpdate(answer: Answer): void | ValidationException {
         const invalidFields: Array<string> = []
 
         try {
-            if (question.id !== undefined) {
-                if (question.id === '') invalidFields.push('id')
-                else ObjectIdValidator.validate(question.id)
+            if (answer.id !== undefined){ 
+                if (answer.id === '') invalidFields.push('id')
+                else ObjectIdValidator.validate(answer.id)
             }
-            if (question.description !== undefined && question.description === '') invalidFields.push('description')
+            if (answer.description === undefined || answer.description === '') invalidFields.push('description')
+                
 
-            
             if (invalidFields.length > 0) {
                 throw new ValidationException(
                     Messages.ERROR_MESSAGE.REQUIRED_FIELDS,

@@ -6,7 +6,8 @@
 export abstract class Messages {
 
     public static readonly AUTH: any = {
-        
+        MSG_NOT_FOUND: 'Usuário não encontrado',
+        DESC_NOT_FOUND: 'E-mail fornecido não corresponde a nenhum usuário cadastrado no sistema.',
     }
     
     public static readonly INVITES: any = {
@@ -20,11 +21,16 @@ export abstract class Messages {
         USER_ID_NOT_REGISTERED: 'O id fornecido para o usuário do convite não está registrado no sistema!',
         GROUP_ID_NOT_REGISTERED: 'O id fornecido para o grupo não está registrado no sistema!',
         ALREADY_REGISTERED: 'Já existe um convite registrado para o usuário entrar no grupo.',
+        UNAUTHORIZED: 'Credenciais inválidas!',
+        UNAUTHORIZED_DESC: 'Sua senha está incorreta',
     }
 
     public static readonly USERS: any = {
         DUPLICATED: 'Recurso duplicado',
         DUPLICATED_DESC: 'Já existe um usuário com este email cadastrado',
+
+        EMAIL_NOT_REQUIRED: "E-mail não pode ser atualizado.",
+        EMAIL_NOT_REQUIRED_DESC: "Não é possível atualizar o e-mail.",
 
         PASSWORD_NOT_REQUIRED: 'Rota para atualização de senha inválida.',
         PASSWORD_NOT_REQUIRED_DESC: 'A senha deve ser atualizada pela rota: /users/password',
@@ -54,13 +60,24 @@ export abstract class Messages {
 
     public static readonly ANSWERS: any = {
 
+        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
+        QUESTION_ID_NOT_REGISTERED: 'O id fornecido para a questão da resposta não está registrado no sistema!',
+
     }
 
     public static readonly QUESTIONS: any = {
 
         CREATOR_ID_NOT_PROVIDED: 'O id do criador da questão não foi fornecido!',
         CREATOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
+        QUESTIONNAIRE_ID_NOT_REGISTERED: 'O id fornecido para o questionário da questão não está registrado no sistema!',
         ALREADY_REGISTERED: 'Já existe uma questão registrada com a descrição fornecida: { {0} }.'
+
+    }
+
+    public static readonly ANSWERS_COMMENTS: any = {
+        AUTHOR_ID_NOT_PROVIDED: 'O id do autor do comentário não foi fornecido!',
+        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o autor do comentário não está registrado no sistema!',
+        INVALID_AUTHOR_ID: 'O id do autor não é válido.',
 
     }
 
