@@ -59,6 +59,7 @@ export class Questionnaire extends Entity implements IJSONTransformable<Question
         if (json.discipline !== undefined) this.discipline = json.discipline
         if (json.questions !== undefined) this.questions = json.questions
         if (json.groupId !== undefined) this.groupId = json.groupId
+        if (json.questions_count !== undefined) this.questionsCount = json.questions_count
 
         return this
     }
