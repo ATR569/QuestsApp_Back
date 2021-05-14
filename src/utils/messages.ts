@@ -8,6 +8,8 @@ export abstract class Messages {
     public static readonly AUTH: any = {
         MSG_NOT_FOUND: 'Usuário não encontrado',
         DESC_NOT_FOUND: 'E-mail fornecido não corresponde a nenhum usuário cadastrado no sistema.',
+        UNAUTHORIZED: 'Credenciais inválidas!',
+        UNAUTHORIZED_DESC: 'Sua senha está incorreta',
     }
     
     public static readonly INVITES: any = {
@@ -21,8 +23,7 @@ export abstract class Messages {
         USER_ID_NOT_REGISTERED: 'O id fornecido para o usuário do convite não está registrado no sistema!',
         GROUP_ID_NOT_REGISTERED: 'O id fornecido para o grupo não está registrado no sistema!',
         ALREADY_REGISTERED: 'Já existe um convite registrado para o usuário entrar no grupo.',
-        UNAUTHORIZED: 'Credenciais inválidas!',
-        UNAUTHORIZED_DESC: 'Sua senha está incorreta',
+        NOT_FOUND: 'Convite não encontrado ou não pendente.'
     }
 
     public static readonly USERS: any = {

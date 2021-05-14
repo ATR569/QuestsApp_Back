@@ -43,12 +43,28 @@ export class InvitesController {
 
     @Patch(':invite_id')
     public async updateStatus(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.OK).send([new Invite().fromJSON(req.body).toJSON()])
+        try {
+            const invite = new Invite().fromJSON(req.body).asNewEntity()
+            invite.id = req.params.invite_id
+
+            const result = await invitesService.update(invite)
+
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
     @Delete(':invite_id')
     public async deleteInvite(req: Request, res: Response): Promise<Response> {
-        return res.status(HttpStatus.NO_CONTENT).send({})
+        try {
+            const result = await invitesService.remove(req.params.invite_id)
+            return res.status(HttpStatus.NO_CONTENT).send({})
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
     }
 
 }

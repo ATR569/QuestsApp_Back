@@ -1,12 +1,13 @@
+import { InviteStatus } from '@src/application/domain/model/invite'
 import Mongoose, { Schema } from 'mongoose'
-
+import { GroupRepoModel } from './groups.schema'
 interface IInviteModel extends Mongoose.Document {
     group?: string
     user?: string
     status?: string
 }
 
-const groupSchema = new Schema(
+const inviteSchema = new Schema(
     {
         group: {
             type: Schema.Types.ObjectId,
@@ -34,4 +35,14 @@ const groupSchema = new Schema(
     }
 )
 
-export const InviteRepoModel = Mongoose.model<IInviteModel>('Invite', groupSchema)
+inviteSchema.post('findOneAndUpdate', function (doc: IInviteModel) {
+    const updatedStatus = this.getUpdate()!['$set']!.status
+
+    if (updatedStatus === InviteStatus.ACCEPTED) {
+        GroupRepoModel.findByIdAndUpdate(doc.group, { $push: { members: doc.user } })
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err))
+    }
+})
+
+export const InviteRepoModel = Mongoose.model<IInviteModel>('Invite', inviteSchema)

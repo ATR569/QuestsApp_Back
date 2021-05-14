@@ -1,7 +1,9 @@
 import { Group } from '@src/application/domain/model/group'
 import { Invite } from '@src/application/domain/model/invite'
-import { User } from '@src/application/domain/model/User'
+// import { User } from '@src/application/domain/model/User'
 import { IEntityMapper } from './entity.mapper.interface'
+import { UserEntityMapper } from './user.entity'
+import { GroupEntityMapper } from './group.entity'
 
 export class InviteEntity {
     public id?: string
@@ -37,8 +39,8 @@ export class InviteEntityMapper implements IEntityMapper<Invite, InviteEntity>{
         const invite = new Invite()
 
         if (json.id !== undefined) invite.id = json.id
-        if (json.group !== undefined) invite.group = new Group().fromJSON(json.group)
-        if (json.user !== undefined) invite.user = new User().fromJSON(json.user)
+        if (json.group !== undefined) invite.group = new GroupEntityMapper().jsonToModel(json.group)
+        if (json.user !== undefined) invite.user = new UserEntityMapper().jsonToModel(json.user)
         if (json.status !== undefined) invite.status = json.status
         if (json.date !== undefined) invite.date = json.date
 
