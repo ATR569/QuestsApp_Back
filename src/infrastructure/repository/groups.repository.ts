@@ -30,7 +30,11 @@ class GroupsRepository implements IRepository<Group> {
             this._groupRepoModel.find(filters)
                 .populate('administrator')
                 .then((result: any) => {
-                    return resolve(result.map((item: any) => this._groupEntityMapper.transform(item)))
+                    return resolve(result.map((item: any) => {
+                        item.members = undefined
+                        item.questionnaires = undefined
+                        return this._groupEntityMapper.transform(item)
+                    }))
                 })
                 .catch((err: any) => {
                     return reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
@@ -113,6 +117,11 @@ class GroupsRepository implements IRepository<Group> {
                 .then((result: any) => resolve(!!result))
                 .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
         })
+    }
+
+    public async checkMember(groupId: string, userId: string): Promise<boolean> {
+        const filters = { _id: groupId, members: userId } 
+        return this.checkExist(filters)
     }
 
     public async checkAdmin(groupId: string, memberId: string): Promise<boolean> {

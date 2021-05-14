@@ -63,12 +63,10 @@ groupSchema.post('find', function(doc: Array<IGroupModel>) {
     doc.forEach(item => {
         if(item.members) {
             item.members_count = item.members.length
-            item.members = undefined
         }
         
         if(item.questionnaires) {
             item.questionnaires_count = item.questionnaires.length
-            item.questionnaires = undefined
         }
     })
 })

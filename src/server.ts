@@ -14,6 +14,7 @@ import { AnswerController } from './ui/controllers/answer.controller'
 import { AnswerCommentController } from './ui/controllers/answerComment.controller'
 import { MongoDB } from './infrastructure/database/mongo.db'
 import cors from 'cors'
+import { InvitesController } from './ui/controllers/invites.controller'
 require('dotenv').config()
 
 const port_http = process.env.PORT_HTTP || 3000
@@ -24,24 +25,31 @@ export class SetupServer extends Server {
     private server?: http.Server
     private mongoUri: string
     private port: any
+    private isRunning: boolean
 
     constructor() {
         super()
         this.mongoUri = mongoUri
         this.port = port_http
+        this.isRunning = false
     }
 
     public init(): void {
-        this.setupExpress()
-        this.setupControllers()
-        this.setupErrorsHandler()
-        this.setupDatabase()
+        if (!this.isRunning) {
+            this.setupExpress()
+            this.setupControllers()
+            this.setupErrorsHandler()
+            this.setupDatabase()
+        }
     }
 
     public start(): void {
-        this.server = this.app.listen(this.port, () => {
-            console.log('Server listening on port: ' + this.port)
-        })
+        if (!this.isRunning) {
+            this.server = this.app.listen(this.port, () => {
+                this.isRunning = true
+                console.log('Server listening on port: ' + this.port)
+            })
+        }
     }
 
     private setupErrorsHandler(): void {
@@ -60,6 +68,7 @@ export class SetupServer extends Server {
         const questionnaireController = new QuestionnaireController()
         const usersController = new UsersController()
         const questionsController = new QuestionsController()
+        const invitesController = new InvitesController()
         const answersController = new AnswerController()
         const answersCommentController = new AnswerCommentController()
 
@@ -70,6 +79,7 @@ export class SetupServer extends Server {
             questionnaireController,
             usersController,
             questionsController,
+            invitesController,
             answersController,
             answersCommentController
         ]

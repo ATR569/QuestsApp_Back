@@ -6,11 +6,24 @@
 export abstract class Messages {
 
     public static readonly AUTH: any = {
-        UNAUTHORIZED: 'Credenciais inválidas!',
-        UNAUTHORIZED_DESC: 'Sua senha está incorreta',
-
         MSG_NOT_FOUND: 'Usuário não encontrado',
         DESC_NOT_FOUND: 'E-mail fornecido não corresponde a nenhum usuário cadastrado no sistema.',
+        UNAUTHORIZED: 'Credenciais inválidas!',
+        UNAUTHORIZED_DESC: 'Sua senha está incorreta',
+    }
+    
+    public static readonly INVITES: any = {
+        GROUP_ID_NOT_PROVIDED: 'O id do grupo não foi fornecido!',
+        INVALID_GROUP_ID: 'O id do grupo não é válido.',
+        USER_ID_NOT_PROVIDED: 'O id do usuário não foi fornecido!',
+        INVALID_USER_ID: 'O id do usuário não é válido.',
+        INVALID_STATUS: 'O status fornecido é inválido.',
+        INVALID_STATUS_DESC: 'O status tem que ser um dos seguintes valores: [ pending, accepted, denied ].',
+        FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.',
+        USER_ID_NOT_REGISTERED: 'O id fornecido para o usuário do convite não está registrado no sistema!',
+        GROUP_ID_NOT_REGISTERED: 'O id fornecido para o grupo não está registrado no sistema!',
+        ALREADY_REGISTERED: 'Já existe um convite registrado para o usuário entrar no grupo.',
+        NOT_FOUND: 'Convite não encontrado ou não pendente.'
     }
 
     public static readonly USERS: any = {
@@ -38,6 +51,7 @@ export abstract class Messages {
         FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.',
         MEMBER_NOT_REMOVED: 'Membro do grupo não removido.',
         ADMIN_CANT_BE_REMOVED: 'O admininstrador do grupo não pode ser removido.',
+        USER_IS_ALREADY_A_MEMBER: 'O usuário já é membro do grupo.',
     }
 
     public static readonly QUESTIONNAIRES: any = {
