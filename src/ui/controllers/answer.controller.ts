@@ -16,20 +16,20 @@ export class AnswerController {
      * @param res 
      * @returns 
      */
-         @Post('')
-         public async createAnswer(req: Request, res: Response): Promise<Response> {
-             try {
+    @Post('')
+    public async createAnswer(req: Request, res: Response): Promise<Response> {
+        try {
 
-                 const answer = new Answer().fromJSON(req.body).asNewEntity()
-   
-                 const result = await answerService.add(answer)
-     
-                 return res.status(HttpStatus.CREATED).send(result)
-             } catch (err) {
-                 const apiException = ApiExceptionManager.build(err)
-                 return res.status(apiException.code).send(apiException)
-             }
-         }
+            const answer = new Answer().fromJSON(req.body).asNewEntity()
+
+            const result = await answerService.add(answer)
+
+            return res.status(HttpStatus.CREATED).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
+    }
 
     /**
      * Get a answer by id
@@ -41,7 +41,7 @@ export class AnswerController {
     @Get(':answerId')
     public async getAnswerById(req: Request, res: Response): Promise<Response> {
         try {
-            
+
             const result = await answerService.getById(req.params.answerId)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
@@ -49,6 +49,8 @@ export class AnswerController {
             return res.status(apiException.code).send(apiException)
         }
     }
+
+
 
     /**
      * Update a answer by id
@@ -78,18 +80,18 @@ export class AnswerController {
      * @param {Response} res 
      * @returns {answer}
      */
-     @Patch(':answerId')
-     public async updateAnswerById(req: Request, res: Response): Promise<Response> {
-         try {
-             const answer = new Answer().fromJSON(req.body)
-
-             const result = await answerService.update(answer)
-             return res.status(HttpStatus.OK).send(result)
-         } catch (err) {
-             const apiException = ApiExceptionManager.build(err)
-             return res.status(apiException.code).send(apiException)
-         }
-     }
+    @Patch(':answerId')
+    public async updateAnswerById(req: Request, res: Response): Promise<Response> {
+        try {
+            const answer = new Answer().fromJSON(req.body)
+            answer.id = req.params.answerId
+            const result = await answerService.update(answer)
+            return res.status(HttpStatus.OK).send(result)
+        } catch (err) {
+            const apiException = ApiExceptionManager.build(err)
+            return res.status(apiException.code).send(apiException)
+        }
+    }
 
     /**
      * Remove a answer by id
@@ -108,5 +110,5 @@ export class AnswerController {
         }
     }
 
-    
+
 }

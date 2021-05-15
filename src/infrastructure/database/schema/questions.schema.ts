@@ -44,6 +44,7 @@ const questionSchema = new Schema(
 // When delete a question
 questionSchema.post('findOneAndDelete', function (doc: IQuestionModel) {
     const filters = this.getFilter()
+
     //all their answers will be deleted too
     if (doc){
         AnswerRepoModel
@@ -58,9 +59,7 @@ questionSchema.post('findOneAndDelete', function (doc: IQuestionModel) {
     
     if (doc){
         QuestionnaireRepoModel
-            .findByIdAndUpdate({ 
-                _questions: { $in: doc.questionnaireId} 
-            })
+            .findByIdAndUpdate({_id: doc.questionnaireId}, {$pull: { questions : doc._id}})
 
             .then(res => Promise.resolve(res))
             .catch(err => Promise.reject(err))

@@ -3,6 +3,7 @@ import { Answer } from '@src/application/domain/model/answer'
 import { Question } from '@src/application/domain/model/question'
 import { IRepository } from '@src/application/port/repository.interface'
 import { Messages } from '@src/utils/messages'
+import { QuestionnaireRepoModel } from '../database/schema/questionnaire.schema'
 import { QuestionRepoModel } from '../database/schema/questions.schema'
 import { QuestionEntityMapper } from '../entity/question.entity'
 
@@ -10,7 +11,7 @@ class QuestionsRepository implements IRepository<Question> {
     constructor(
         private readonly _questionEntityMapper: QuestionEntityMapper = new QuestionEntityMapper(),
         private readonly _questionRepoModel: any = QuestionRepoModel,
-        private readonly _questionnaireRepoModel: any = QuestionRepoModel
+        private readonly _questionnaireRepoModel: any = QuestionnaireRepoModel
     ) { }
 
     public async create(question: Question): Promise<Question> {
@@ -21,10 +22,12 @@ class QuestionsRepository implements IRepository<Question> {
         return new Promise<Question>((resolve, reject) => {
             this._questionRepoModel.create(newQuestion)
                 .then(async(result: any) => {
-
+                    
                     const update = { $push: { questions: result.id} }
                     
                     await this._questionnaireRepoModel.findByIdAndUpdate(questionnaireId, update, { new: true })
+                    
+
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => {

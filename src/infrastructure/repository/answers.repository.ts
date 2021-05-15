@@ -56,9 +56,15 @@ class AnswersRepository implements IRepository<Answer> {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                             Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'reposta').replace('{id}', id)))
                     }
+<<<<<<< HEAD
 
                     const answer: any = this._answerEntityMapper.transform(result)
 
+=======
+                    
+                    
+                    
+>>>>>>> feature/Answer
                     return resolve(result)
                 })
                 .catch((err: any) => {
@@ -81,8 +87,8 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{recurso}', 'answer')
                                 .replace('{score}', answerUpd.score))
                         )
-                    //console.log(result)
-                    return resolve(answer)
+                    
+                    return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => reject(err))
         })
@@ -103,8 +109,13 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{recurso}', 'answer')
                                 .replace('{description}', answerUpd.description))
                         )
+<<<<<<< HEAD
 
                     return resolve(result)
+=======
+                    
+                    return resolve(this.findOne(result.id))
+>>>>>>> feature/Answer
                 })
                 .catch((err: any) => reject(err))
         })
