@@ -56,16 +56,8 @@ class AnswersRepository implements IRepository<Answer> {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                             Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'reposta').replace('{id}', id)))
                     }
-<<<<<<< HEAD
-
                     const answer: any = this._answerEntityMapper.transform(result)
-
-=======
-                    
-                    
-                    
->>>>>>> feature/Answer
-                    return resolve(result)
+                    return resolve(answer)
                 })
                 .catch((err: any) => {
                     reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
@@ -76,8 +68,8 @@ class AnswersRepository implements IRepository<Answer> {
     public async updateLike(answer: Answer): Promise<Answer> {
         const answerUpd = this._answerEntityMapper.transform(answer)
         const update = { $inc: { score: 1 } }
-        return new Promise<Answer>((resolve, reject) => {
 
+        return new Promise<Answer>((resolve, reject) => {
             this._answerRepoModel.findByIdAndUpdate(answerUpd.id, update, { new: true })
                 .then((result: any) => {
                     if (!result)
@@ -109,13 +101,8 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{recurso}', 'answer')
                                 .replace('{description}', answerUpd.description))
                         )
-<<<<<<< HEAD
-
-                    return resolve(result)
-=======
                     
                     return resolve(this.findOne(result.id))
->>>>>>> feature/Answer
                 })
                 .catch((err: any) => reject(err))
         })
@@ -123,12 +110,8 @@ class AnswersRepository implements IRepository<Answer> {
 
     public async delete(id: string): Promise<Answer> {
         return new Promise<Answer>((resolve, reject) => {
-            //falta apagar referencias
-
             this._answerRepoModel.findOneAndDelete({ _id: id })
                 .then((result: any) => {
-
-
                     return resolve(new Answer())
                 })
                 .catch((err: any) => reject(err))
