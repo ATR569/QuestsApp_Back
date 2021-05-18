@@ -1,11 +1,13 @@
-import { Controller, Delete, Get, Patch, Post } from '@overnightjs/core'
+import { ClassMiddleware, Controller, Delete, Get, Patch, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { ApiExceptionManager } from '../exception/api.exception.manager'
 import HttpStatus from 'http-status-codes'
-import { groupsService} from '@src/application/services/groups.service'
+import { groupsService } from '@src/application/services/groups.service'
 import { Group } from '@src/application/domain/model/group'
+import { authenticate } from '../middlewares/auth.middleware'
 
 @Controller('groups')
+@ClassMiddleware(authenticate)
 export class GroupsController {
 
     /**
@@ -20,7 +22,7 @@ export class GroupsController {
         try {
             const group = new Group().fromJSON(req.body).asNewEntity()
             if (group.administrator !== undefined) group.members = [group.administrator]
-            
+
             const result = await groupsService.add(group)
             return res.status(HttpStatus.CREATED).send(result)
         } catch (err) {
@@ -28,7 +30,7 @@ export class GroupsController {
             return res.status(apiException.code).send(apiException)
         }
     }
-    
+
     /**
      * Get all study groups.
      * 
@@ -39,7 +41,9 @@ export class GroupsController {
     @Get('')
     public async getAllGroups(req: Request, res: Response): Promise<Response> {
         try {
-            const filters = {...req.query}
+            const user_context = req.headers.user_context
+            const filters = { ...req.query, members: user_context }
+
             const result = await groupsService.getAll(filters)
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
@@ -57,8 +61,12 @@ export class GroupsController {
      */
     @Get(':group_id')
     public async getGroupById(req: Request, res: Response): Promise<Response> {
+        const { user_context } = req.headers
+
         try {
             const result = await groupsService.getById(req.params.group_id)
+            // if (result.administrator?.id !== user_context)
+            //     res.status(HttpStatus.FORBIDDEN).send(new ApiException(HttpStatus.FORBIDDEN, Mess))
             return res.status(HttpStatus.OK).send(result)
         } catch (err) {
             const apiException = ApiExceptionManager.build(err)
