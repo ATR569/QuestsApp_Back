@@ -3,6 +3,7 @@ import { ValidationException } from '../exception/exceptions'
 import { Invite } from '../model/invite'
 import { ObjectIdValidator } from './object.id.validator'
 import { InviteStatus } from '../model/invite'
+import { StringValidator } from './string.validator'
 
 export abstract class InviteValidator {
     public static validateCreate(invite: Invite): void | ValidationException {
@@ -25,12 +26,12 @@ export abstract class InviteValidator {
 
             // Validate invite.user
             if (invite.user === undefined) missingFields.push('user')
-            else if (invite.user.id === undefined) {
+            else if (invite.user.email === undefined) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
                     Messages.INVITES.USER_ID_NOT_PROVIDED)
             } else {
                 try {
-                    ObjectIdValidator.validate(invite.user.id)
+                    StringValidator.validate(invite.user.email, 'email')
                 } catch (err) {
                     throw new ValidationException(Messages.INVITES.INVALID_USER_ID,
                         Messages.ERROR_MESSAGE.INVALID_ID_DESC)

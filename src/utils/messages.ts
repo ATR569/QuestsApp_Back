@@ -17,6 +17,8 @@ export abstract class Messages {
         INVALID_GROUP_ID: 'O id do grupo não é válido.',
         USER_ID_NOT_PROVIDED: 'O id do usuário não foi fornecido!',
         INVALID_USER_ID: 'O id do usuário não é válido.',
+        USER_EMAIL_NOT_PROVIDED: 'O email do usuário não foi fornecido!',
+        INVALID_USER_EMAIL: 'O email do usuário não é válido.',
         INVALID_STATUS: 'O status fornecido é inválido.',
         INVALID_STATUS_DESC: 'O status tem que ser um dos seguintes valores: [ pending, accepted, denied ].',
         FIELD_CANT_UPDATED: 'O campo { {0} } não pode ser atualizado.',
@@ -41,6 +43,7 @@ export abstract class Messages {
 
         OLD_PASSWORD_NOT_MATCH: 'Senhas não conferem.',
         OLD_PASSWORD_NOT_MATCH_DESC: 'O campo: { old_password } não coincide com a senha atual do usuário.',
+        USER_EMAIL_NOT_REGISTERED: 'Não existe usuário registrado no sistema com o email fornecido!',
     }
 
     public static readonly GROUPS: any = {

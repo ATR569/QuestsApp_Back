@@ -121,6 +121,22 @@ class UsersRepository implements IRepository<User> {
         })
     }
 
+    public async findOneByEmail(email: string | undefined): Promise<User> {
+        return new Promise<User>((resolve, reject) => {
+            this._userRepoModel.findOne({ email: email })
+                .then((result: any) => {
+                    if (!result) {
+                        return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                            Messages.USERS.USER_EMAIL_NOT_REGISTERED))
+                    }
+
+                    const user: any = this._userEntityMapper.transform(result)
+                    return resolve(user)
+                }).catch((err: any) => {
+                    reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR, err.message))
+                })
+        })
+    }
 }
 
 export const usersRepository: UsersRepository = new UsersRepository()

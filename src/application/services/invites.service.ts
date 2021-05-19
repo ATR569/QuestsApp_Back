@@ -7,6 +7,7 @@ import { Messages } from '@src/utils/messages'
 import { usersRepository } from '@src/infrastructure/repository/user.repository'
 import { groupsRepository } from '@src/infrastructure/repository/groups.repository'
 import { ObjectIdValidator } from '../domain/validation/object.id.validator'
+import { User } from '../domain/model/user'
 
 class InvitesService implements IService<Invite> {
     public async add(invite: Invite): Promise<Invite> {
@@ -15,14 +16,13 @@ class InvitesService implements IService<Invite> {
             InviteValidator.validateCreate(invite)
 
             //  Check if the user is registered
-            if (invite.user !== undefined && invite.user.id !== undefined) {
-                if (!(await usersRepository.checkExist({ _id: invite.user.id })))
-                    throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                        Messages.INVITES.USER_ID_NOT_REGISTERED)
+            if (invite !== undefined && invite.user !== undefined) {
+                await usersRepository.findOneByEmail(invite.user.email)
+                    .then((user: User) => invite.user!.id = user.id)
             }
 
             //  Check if the group is registered
-            if (invite.group !== undefined && invite.group.id !== undefined) {
+            if (invite.group !== undefined) {
                 if (!(await groupsRepository.checkExist({ _id: invite.group.id })))
                     throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                         Messages.INVITES.GROUP_ID_NOT_REGISTERED)
