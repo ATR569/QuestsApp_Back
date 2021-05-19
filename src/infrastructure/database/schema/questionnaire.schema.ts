@@ -1,5 +1,6 @@
 import Mongoose, { Schema } from 'mongoose'
 import { QuestionRepoModel } from './questions.schema'
+import { GroupRepoModel } from './groups.schema'
 
 interface IQuestionnaireModel extends Mongoose.Document {
     discipline?: string,
@@ -45,6 +46,14 @@ questionnaireSchema.post('findOneAndDelete', function (doc: IQuestionnaireModel)
             .deleteMany({
                 _id: { $in: doc.questions }
             })
+            .then(res => Promise.resolve(res))
+            .catch(err => Promise.reject(err))
+    }
+
+    if (doc) {
+        GroupRepoModel
+            .findByIdAndUpdate({ _id: doc.groupId }, { $pull: { questionnaires: doc._id } })
+
             .then(res => Promise.resolve(res))
             .catch(err => Promise.reject(err))
     }
