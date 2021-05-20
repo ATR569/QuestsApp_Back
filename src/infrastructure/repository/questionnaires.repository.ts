@@ -47,14 +47,14 @@ class QuestionnaireRepository implements IRepository<Questionnaire> {
                 .populate({
                     path: 'questions',
                     populate: [
-                        { path: 'creator' },
+                        { path: 'creator', select: '-password' },
                         {
-                            path: 'answers',
+                            path: 'answers', select: '-author',
                             populate: [
                                 {
                                     path: 'answerComments',
                                     populate: {
-                                        path: 'author'
+                                        path: 'author', select: '-password'
                                     }
                                 }
                             ]
