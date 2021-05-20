@@ -44,7 +44,23 @@ class QuestionnaireRepository implements IRepository<Questionnaire> {
     public async findOne(id: string): Promise<Questionnaire> {
         return new Promise<Questionnaire>((resolve, reject) => {
             this._questionnaireRepoModel.findOne({ _id: id })
-                .populate('questions')
+                .populate({
+                    path: 'questions',
+                    populate: [
+                        { path: 'creator' },
+                        {
+                            path: 'answers',
+                            populate: [
+                                {
+                                    path: 'answerComments',
+                                    populate: {
+                                        path: 'author'
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                })
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,

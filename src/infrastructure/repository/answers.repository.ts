@@ -37,6 +37,7 @@ class AnswersRepository implements IRepository<Answer> {
     public async find(filters: object): Promise<Answer[]> {
         return new Promise<Array<Answer>>((resolve, reject) => {
             this._answerRepoModel.find(filters)
+                .populate('author')
                 .populate('comments')
                 .then((result: any) => {
                     return resolve(result.map((item: any) => this._answerEntityMapper.transform(item)))
@@ -50,6 +51,7 @@ class AnswersRepository implements IRepository<Answer> {
     public async findOne(id: string): Promise<Answer> {
         return new Promise<Answer>((resolve, reject) => {
             this._answerRepoModel.findOne({ _id: id })
+                .populate('author')
                 .populate('comments')
                 .then((result: any) => {
                     if (!result) {
@@ -79,7 +81,7 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{recurso}', 'answer')
                                 .replace('{score}', answerUpd.score))
                         )
-                    
+
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => reject(err))
@@ -101,7 +103,7 @@ class AnswersRepository implements IRepository<Answer> {
                                 .replace('{recurso}', 'answer')
                                 .replace('{description}', answerUpd.description))
                         )
-                    
+
                     return resolve(this.findOne(result.id))
                 })
                 .catch((err: any) => reject(err))
