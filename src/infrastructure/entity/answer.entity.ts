@@ -48,10 +48,10 @@ export class AnswerEntityMapper implements IEntityMapper<Answer, AnswerEntity>{
         if (json.id) answer.id = json.id
         if (json.description) answer.description = json.description
         if (json.author) answer.author = new User().fromJSON(json.author)
-        if (json.score) answer.score = json.score
+        if (json.score != undefined) answer.score = json.score
         if (json.questionId) answer.questionId = json.questionId
         if (json.answerComments && json.answerComments instanceof Array)
-            answer.answerComments = json.answerComments.map((comm: any) => new Answer().fromJSON(comm))
+            answer.answerComments = json.answerComments.map((comm: any) => new AnswerComment().fromJSON(comm))
         return answer
     }
 

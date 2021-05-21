@@ -37,8 +37,15 @@ class AnswersRepository implements IRepository<Answer> {
     public async find(filters: object): Promise<Answer[]> {
         return new Promise<Array<Answer>>((resolve, reject) => {
             this._answerRepoModel.find(filters)
-                .populate('author')
-                .populate('comments')
+                .populate({ path: 'author', select: '-password' })
+                .populate(
+                    {
+                        path: 'answerComments',
+                        populate: {
+                            path: 'author', select: '-password'
+                        }
+                    }
+                )
                 .then((result: any) => {
                     return resolve(result.map((item: any) => this._answerEntityMapper.transform(item)))
                 })
@@ -51,12 +58,19 @@ class AnswersRepository implements IRepository<Answer> {
     public async findOne(id: string): Promise<Answer> {
         return new Promise<Answer>((resolve, reject) => {
             this._answerRepoModel.findOne({ _id: id })
-                .populate('author')
-                .populate('comments')
+                .populate({ path: 'author', select: '-password' })
+                .populate(
+                    {
+                        path: 'answerComments',
+                        populate: {
+                            path: 'author', select: '-password'
+                        }
+                    }
+                )
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'reposta').replace('{id}', id)))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'answer').replace('{1}', id)))
                     }
                     const answer: any = this._answerEntityMapper.transform(result)
                     return resolve(answer)
@@ -78,8 +92,8 @@ class AnswersRepository implements IRepository<Answer> {
                         return reject(new NotFoundException(
                             Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                             Messages.ERROR_MESSAGE.DESC_NOT_FOUND
-                                .replace('{recurso}', 'answer')
-                                .replace('{score}', answerUpd.score))
+                                .replace('{0}', 'answer')
+                                .replace('{1}', answerUpd.id))
                         )
 
                     return resolve(this.findOne(result.id))
@@ -100,8 +114,8 @@ class AnswersRepository implements IRepository<Answer> {
                         return reject(new NotFoundException(
                             Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                             Messages.ERROR_MESSAGE.DESC_NOT_FOUND
-                                .replace('{recurso}', 'answer')
-                                .replace('{description}', answerUpd.description))
+                                .replace('{0}', 'answer')
+                                .replace('{1}', answerUpd.id))
                         )
 
                     return resolve(this.findOne(result.id))
