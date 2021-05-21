@@ -57,7 +57,7 @@ class AnswerService implements IService<Answer> {
 
             if (!(await answersRepository.checkExist({ _id: answer.id })))
                 throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'answer').replace('{id}', answer.id))
+                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'answer').replace('{1}', answer.id))
 
             return answersRepository.updateLike(answer)
         } catch (err) {
@@ -71,7 +71,7 @@ class AnswerService implements IService<Answer> {
 
             if (!(await answersRepository.checkExist({ _id: answer.id })))
                 throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'answer').replace('{id}', answer.id))
+                    Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'answer').replace('{1}', answer.id))
 
             return answersRepository.update(answer)
         } catch (err) {
