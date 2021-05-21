@@ -3,13 +3,13 @@ import { IService } from '../port/service.interface'
 import { groupsRepository } from '@src/infrastructure/repository/groups.repository'
 import { usersRepository } from '@src/infrastructure/repository/user.repository'
 import { GroupValidator } from '../domain/validation/group.validator';
-import { ConflictException, NotFoundException, ValidationException } from '../domain/exception/exceptions';
+import { ConflictException, ForbiddenException, NotFoundException, ValidationException } from '../domain/exception/exceptions';
 import { Messages } from '@src/utils/messages';
 import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 
 class GroupsService implements IService<Group> {
 
-    public async add(group: Group): Promise<Group> {
+    public async add(group: Group, user_context: string): Promise<Group> {
         try {
             //  Validate the group
             GroupValidator.validateCreate(group)
@@ -23,6 +23,9 @@ class GroupsService implements IService<Group> {
                 if (!(await usersRepository.checkExist({ _id: group.administrator.id })))
                     throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                         Messages.GROUPS.ADMIN_ID_NOT_REGISTERED)
+
+                //  Check Forbidden
+                if (group.administrator.id !== user_context) this.generateForbiddenExceptionMessage()
             }
 
             //  Creates the group
@@ -40,17 +43,20 @@ class GroupsService implements IService<Group> {
         }
     }
 
-    public async getById(group_id: string): Promise<Group> {
+    public async getById(group_id: string, user_context: string): Promise<Group> {
         try {
             ObjectIdValidator.validate(group_id)
 
-            return groupsRepository.findOne(group_id)
+            await this.isMemberOf(user_context, group_id)
+                .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
+
+            return await groupsRepository.findOne(group_id)
         } catch (err) {
             return Promise.reject(err)
         }
     }
 
-    public async update(group: Group): Promise<Group> {
+    public async update(group: Group, user_context: string): Promise<Group> {
         try {
             GroupValidator.validateUpdate(group)
 
@@ -72,23 +78,31 @@ class GroupsService implements IService<Group> {
                         Messages.GROUPS.ADMIN_ID_NOT_REGISTERED)
             }
 
+            //  Check permission
+            await this.isAdminOf(user_context, group.id!)
+                .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
+
             return groupsRepository.update(group)
         } catch (err) {
             return Promise.reject(err)
         }
     }
 
-    public async remove(group_id: string): Promise<Group> {
+    public async remove(group_id: string, user_context: string): Promise<Group> {
         try {
             ObjectIdValidator.validate(group_id)
 
-            return groupsRepository.delete(group_id)
+            //  Check permission
+            await this.isAdminOf(user_context, group_id)
+                .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
+
+                return groupsRepository.delete(group_id)
         } catch (err) {
             return Promise.reject(err)
         }
     }
 
-    public async removeUserFromGroup(group_id: string, member_id: string): Promise<Group> {
+    public async removeUserFromGroup(group_id: string, member_id: string, user_context: string): Promise<Group> {
         try {
             ObjectIdValidator.validate(group_id)
             ObjectIdValidator.validate(member_id)
@@ -104,12 +118,35 @@ class GroupsService implements IService<Group> {
                     Messages.GROUPS.ADMIN_CANT_BE_REMOVED)
             }
 
+            //  Check permission
+            await this.isAdminOf(user_context, group_id)
+                .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
+
             return groupsRepository.deleteMember(group_id, member_id)
         } catch (err) {
             return Promise.reject(err)
         }
     }
 
+    private async isMemberOf(user_id: string, group_id: string): Promise<boolean> {
+        if (!(await groupsRepository.checkExist({ _id: group_id })))
+            throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', group_id))
+
+        return groupsRepository.checkMember(group_id, user_id)
+    }
+
+    private async isAdminOf(user_id: string, group_id: string): Promise<boolean> {
+        if (!(await groupsRepository.checkExist({ _id: group_id })))
+            throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
+                Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', group_id))
+
+        return groupsRepository.checkAdmin(group_id, user_id)
+    }
+
+    private generateForbiddenExceptionMessage(): ForbiddenException {
+        throw new ForbiddenException(Messages.ERROR_MESSAGE.FORBIDDEN, Messages.ERROR_MESSAGE.FORBIDDEN_DESC)
+    }
 }
 
 export const groupsService = new GroupsService()

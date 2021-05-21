@@ -13,8 +13,9 @@ export abstract class ApiExceptionManager {
             return new ApiException(HTTPStatus.NOT_FOUND, err.message, err.description)
         else if (err instanceof ex.UnauthorizedException)
             return new ApiException(HTTPStatus.UNAUTHORIZED, err.message, err.description)
+        else if (err instanceof ex.ForbiddenException)
+            return new ApiException(HTTPStatus.FORBIDDEN, err.message, err.description)
         else
             return new ApiException(HTTPStatus.INTERNAL_SERVER_ERROR, err.message, err.description)
     }
-
 }
