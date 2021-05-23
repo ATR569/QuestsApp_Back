@@ -2,7 +2,7 @@ export interface IService<T> {
 
     add(item: T, user_context: string): Promise<T>
 
-    getAll(filters: object): Promise<Array<T>>
+    getAll(filters: object, user_context?: string): Promise<Array<T>>
 
     getById(id: string, user_context: string): Promise<T>
 
