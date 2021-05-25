@@ -96,7 +96,7 @@ class GroupsService implements IService<Group> {
             await this.isAdminOf(user_context, group_id)
                 .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
 
-                return groupsRepository.delete(group_id)
+            return groupsRepository.delete(group_id)
         } catch (err) {
             return Promise.reject(err)
         }
@@ -128,7 +128,17 @@ class GroupsService implements IService<Group> {
         }
     }
 
-    private async isMemberOf(user_id: string, group_id: string): Promise<boolean> {
+    public async checkNotMemberForbidden(user_id: string, group_id: string): Promise<void> {
+        await this.isMemberOf(user_id, group_id)
+            .then(res => { if (!res) groupsService.generateForbiddenExceptionMessage() })
+    }
+
+    public async checkNotAdminForbidden(user_id: string, group_id: string): Promise<void> {
+        await this.isAdminOf(user_id, group_id)
+            .then(res => { if (!res) groupsService.generateForbiddenExceptionMessage() })
+    }
+
+    public async isMemberOf(user_id: string, group_id: string): Promise<boolean> {
         if (!(await groupsRepository.checkExist({ _id: group_id })))
             throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                 Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', group_id))
@@ -136,7 +146,7 @@ class GroupsService implements IService<Group> {
         return groupsRepository.checkMember(group_id, user_id)
     }
 
-    private async isAdminOf(user_id: string, group_id: string): Promise<boolean> {
+    public async isAdminOf(user_id: string, group_id: string): Promise<boolean> {
         if (!(await groupsRepository.checkExist({ _id: group_id })))
             throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                 Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', group_id))
@@ -144,7 +154,7 @@ class GroupsService implements IService<Group> {
         return groupsRepository.checkAdmin(group_id, user_id)
     }
 
-    private generateForbiddenExceptionMessage(): ForbiddenException {
+    public generateForbiddenExceptionMessage(): ForbiddenException {
         throw new ForbiddenException(Messages.ERROR_MESSAGE.FORBIDDEN, Messages.ERROR_MESSAGE.FORBIDDEN_DESC)
     }
 }

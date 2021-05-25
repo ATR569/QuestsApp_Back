@@ -10,6 +10,7 @@ import { ObjectIdValidator } from '../domain/validation/object.id.validator';
 import { usersRepository } from '@src/infrastructure/repository/user.repository'
 import { questionsRepository } from '@src/infrastructure/repository/questions.repository'
 import { groupsRepository } from '@src/infrastructure/repository/groups.repository'
+import { groupsService } from './groups.service'
 
 class QuestionnaireService implements IService<Questionnaire> {
 
@@ -25,8 +26,7 @@ class QuestionnaireService implements IService<Questionnaire> {
                 throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                     Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', questionnaire.groupId))
 
-            await this.isMemberOf(user_context, questionnaire.groupId!)
-                .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
+            await groupsService.checkNotMemberForbidden(user_context, questionnaire.groupId!)
 
             return questionnairesRepository.create(questionnaire)
         } catch (err) {
@@ -66,9 +66,6 @@ class QuestionnaireService implements IService<Questionnaire> {
 
     public async getAll(filters: any, user_context: string): Promise<Questionnaire[]> {
         try {
-            await this.isMemberOf(user_context, filters.groupId!)
-                .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
-
             return questionnairesRepository.find(filters)
         } catch (err) {
             return Promise.reject(err)
@@ -80,8 +77,8 @@ class QuestionnaireService implements IService<Questionnaire> {
 
         return await questionnairesRepository.findOne(id)
             .then(async result => {
-                await this.isMemberOf(user_context, result.groupId!)
-                    .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
+                await groupsService.checkNotMemberForbidden(user_context, result.groupId!)
+
                 return result
             })
             .catch(err => { throw err })
@@ -138,25 +135,9 @@ class QuestionnaireService implements IService<Questionnaire> {
         return questionnairesRepository.deleteQuestion(question_id)
     }
 
-    private async checkForbidden(questionnaire_id: string, user_context: string): Promise<void> {
-        await questionnairesRepository.findOne(questionnaire_id)
-            .then(async result => {
-                await this.isMemberOf(user_context, result.groupId!)
-                    .then(res => { if (!res) this.generateForbiddenExceptionMessage() })
-            })
-            .catch(err => { throw err })
-    }
-
-    private async isMemberOf(userId: string, groupId: string): Promise<boolean> {
-        if (!(await groupsRepository.checkExist({ _id: groupId })))
-            throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'grupo').replace('{1}', groupId))
-
-        return groupsRepository.checkMember(groupId, userId)
-    }
-
-    private generateForbiddenExceptionMessage(): ForbiddenException {
-        throw new ForbiddenException(Messages.ERROR_MESSAGE.FORBIDDEN, Messages.ERROR_MESSAGE.FORBIDDEN_DESC)
+    public async checkForbidden(questionnaire_id: string, user_context: string): Promise<void> {
+        const result = await questionnairesRepository.findOne(questionnaire_id)
+        await groupsService.checkNotMemberForbidden(user_context, result.groupId!)
     }
 }
 

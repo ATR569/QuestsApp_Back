@@ -34,7 +34,6 @@ class UsersService implements IService<User> {
 
             return usersRepository.findOne(id)
         } catch (err) {
-            console.log('aqui')
             return Promise.reject(err)
         }
     }

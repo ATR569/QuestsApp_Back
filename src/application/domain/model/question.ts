@@ -8,9 +8,8 @@ export class Question extends Entity implements IJSONTransformable<Question> {
     private _questionnaireId?: string
     private _creator?: User
     private _answers?: Array<Answer>
-    
 
-    get description() : string | undefined{
+    get description(): string | undefined {
         return this._description
     }
 
@@ -18,7 +17,7 @@ export class Question extends Entity implements IJSONTransformable<Question> {
         this._description = description
     }
 
-    get creator() : User | undefined{
+    get creator(): User | undefined {
         return this._creator
     }
 
@@ -26,19 +25,19 @@ export class Question extends Entity implements IJSONTransformable<Question> {
         this._creator = creator
     }
 
-    get answers() : Array<Answer> | undefined{
+    get answers(): Array<Answer> | undefined {
         return this._answers
     }
 
     set answers(answers: Array<Answer> | undefined) {
         this._answers = answers
     }
-    
-    set questionnaireId(questionnaireId: string | undefined){
+
+    set questionnaireId(questionnaireId: string | undefined) {
         this._questionnaireId = questionnaireId
     }
 
-    get questionnaireId(): string | undefined{
+    get questionnaireId(): string | undefined {
         return this._questionnaireId
     }
 
@@ -49,7 +48,6 @@ export class Question extends Entity implements IJSONTransformable<Question> {
             questionnaireId: this.questionnaireId,
             creator: this.creator,
             answers: this.answers
-            
         }
     }
 
@@ -59,14 +57,13 @@ export class Question extends Entity implements IJSONTransformable<Question> {
         if (json.questionnaireId !== undefined) this._questionnaireId = json.questionnaireId
         if (json.creator !== undefined) this.creator = json.creator
         if (json.answers !== undefined) this.answers = json.answers
-        
 
         return this
     }
 
     public asNewEntity(): Question {
         this.id = undefined
+        this.answers = undefined
         return this
     }
-
 }
