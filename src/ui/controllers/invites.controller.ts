@@ -51,8 +51,8 @@ export class InvitesController {
         try {
             const invite = new Invite().fromJSON(req.body).asNewEntity()
             invite.id = req.params.invite_id
-
             const user_context = req.headers.user_context as string
+
             const result = await invitesService.update(invite, user_context)
 
             return res.status(HttpStatus.OK).send(result)

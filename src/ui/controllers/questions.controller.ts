@@ -97,7 +97,6 @@ export class QuestionsController {
     @Patch(':questionId')
     public async updateQuestionById(req: Request, res: Response): Promise<Response> {
         try {
-            const filters = { ...req.query }
             const question = new Question().fromJSON(req.body)
             question.id = req.params.questionId
             const user_context = req.headers.user_context as string

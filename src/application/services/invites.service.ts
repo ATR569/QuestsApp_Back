@@ -37,7 +37,7 @@ class InvitesService implements IService<Invite> {
             if ((await groupsRepository.checkMember(invite.group!.id!, invite.user!.id!)))
                 throw new ConflictException(Messages.GROUPS.USER_IS_ALREADY_A_MEMBER)
 
-           await  this.checkForbidden(invite.group!.id!, user_context)
+            await this.checkForbidden(invite.group!.id!, user_context)
             //  Creates the invite
             return invitesRepository.create(invite)
         } catch (err) {
@@ -67,8 +67,10 @@ class InvitesService implements IService<Invite> {
                 throw new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND, Messages.INVITES.NOT_FOUND)
 
             //  Check if the user_context is the invited user
-            if (user_context !== invite.user!.id)
-                this.generateForbiddenExceptionMessage()
+            await invitesRepository.findOne(invite.id!)
+                .then(res => {
+                    if (user_context !== res.user!.id) this.generateForbiddenExceptionMessage()
+                })
 
             //  Update the invite
             return invitesRepository.update(invite)
@@ -88,7 +90,7 @@ class InvitesService implements IService<Invite> {
                 .catch(err => {
                     if (!(err instanceof NotFoundException)) throw err
                 })
-                
+
 
             return invitesRepository.delete(id)
         } catch (err) {
