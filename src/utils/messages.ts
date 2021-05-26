@@ -64,7 +64,7 @@ export abstract class Messages {
 
     public static readonly ANSWERS: any = {
 
-        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
+        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da resposta não está registrado no sistema!',
         QUESTION_ID_NOT_REGISTERED: 'O id fornecido para a questão da resposta não está registrado no sistema!',
 
     }

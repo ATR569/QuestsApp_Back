@@ -53,6 +53,8 @@ class QuestionService implements IService<Question> {
     }
 
     public async getById(questionId: string, user_context: string): Promise<Question> {
+        ObjectIdValidator.validate(questionId)
+
         return questionsRepository.findOne(questionId)
             .then(async result => {
                 await questionnairesService.checkForbidden(result.questionnaireId!, user_context)
@@ -93,7 +95,7 @@ class QuestionService implements IService<Question> {
         return questionsRepository.getAnswers(questionId)
     }
 
-    private async checkForbidden(question_id: string, user_context: string): Promise<void> {
+    public async checkForbidden(question_id: string, user_context: string): Promise<void> {
         const result = await questionsRepository.findOne(question_id)
         await questionnairesService.checkForbidden(result.questionnaireId!, user_context)
     }
