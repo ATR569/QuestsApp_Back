@@ -2,7 +2,7 @@ import Mongoose, { Schema } from 'mongoose'
 import { AnswerRepoModel } from './answer.schema'
 
 interface IAnswerCommentModel extends Mongoose.Document {
-    name?: string
+    comment?: string
     author?: string
     answerId?: string
 }
@@ -19,7 +19,7 @@ const answerCommentSchema = new Schema(
         },
         answerId: {
             type: String,
-            required: 'grupo é obrigatório'
+            required: 'O id da resposta é obrigatório'
         },
     },
     {

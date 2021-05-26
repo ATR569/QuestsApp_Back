@@ -39,8 +39,20 @@ class QuestionsRepository implements IRepository<Question> {
     public async find(filters: object): Promise<Question[]> {
         return new Promise<Array<Question>>((resolve, reject) => {
             this._questionRepoModel.find(filters)
-                .populate('creator')
-                .populate('answers')
+                .populate({ path: 'creator', select: '-password' })
+                .populate(
+                    {
+                        path: 'answers', select: '-author',
+                        populate: [
+                            {
+                                path: 'answerComments',
+                                populate: {
+                                    path: 'author', select: '-password'
+                                }
+                            }
+                        ]
+                    }
+                )
                 .then((result: any) => {
                     return resolve(result.map((item: any) => this._questionEntityMapper.transform(item)))
                 })
@@ -53,12 +65,24 @@ class QuestionsRepository implements IRepository<Question> {
     public async findOne(id: string): Promise<Question> {
         return new Promise<Question>((resolve, reject) => {
             this._questionRepoModel.findOne({ _id: id })
-                .populate('creator')
-                .populate('answers')
+                .populate({ path: 'creator', select: '-password' })
+                .populate(
+                    {
+                        path: 'answers', select: '-author',
+                        populate: [
+                            {
+                                path: 'answerComments',
+                                populate: {
+                                    path: 'author', select: '-password'
+                                }
+                            }
+                        ]
+                    }
+                )
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'question').replace('{id}', id)))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'question').replace('{1}', id)))
                     }
 
                     const question: any = this._questionEntityMapper.transform(result)
@@ -77,7 +101,7 @@ class QuestionsRepository implements IRepository<Question> {
                 .then((result: any) => {
                     if (!result) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'question').replace('{id}', id)))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'question').replace('{1}', id)))
                     }
 
                     const question: any = this._questionEntityMapper.transform(result)
@@ -103,8 +127,8 @@ class QuestionsRepository implements IRepository<Question> {
                         return reject(new NotFoundException(
                             Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
                             Messages.ERROR_MESSAGE.DESC_NOT_FOUND
-                                .replace('{recurso}', 'question')
-                                .replace('{description}', questionUpd.description))
+                                .replace('{0}', 'question')
+                                .replace('{1}', questionUpd.id))
                         )
                     
                     return resolve(result)
