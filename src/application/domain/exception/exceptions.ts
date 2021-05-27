@@ -30,3 +30,15 @@ export class ValidationException extends Exception {
         super(message, description)
     }
 }
+
+export class UnauthorizedException extends Exception {
+    constructor(message: string, description?: string){
+        super(message, description)
+    }
+}
+
+export class ForbiddenException extends Exception {
+    constructor(message: string, description?: string){
+        super(message, description)
+    }
+}

@@ -55,6 +55,22 @@ class AuthRepository {
         return jwt.sign(payload, private_key, { expiresIn: '1d' })
     }
 
+    public async getPayloadFromToken(token: string): Promise<User | undefined> {
+        const private_key = process.env.JWT_SECRET_KEY || "chavePadrao567244"
+        
+        return new Promise<User | undefined>((resolve, reject) => {
+            try{
+                const decoded = jwt.verify(token, private_key) as any
+                if (decoded.user === undefined)
+                    return resolve(undefined)
+
+                const user = new User().fromJSON(decoded.user)
+                resolve(user)
+            } catch(err) {
+                reject(err.message)
+            }
+        })
+    }
 }
 
 export const authRepository: AuthRepository = new AuthRepository()

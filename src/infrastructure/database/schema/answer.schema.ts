@@ -21,7 +21,8 @@ const answerSchema = new Schema(
             type: Schema.Types.Number
         },
         questionId: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: 'Question',
             required: 'O Id da questão é obrigatório!'
         },
         author: {

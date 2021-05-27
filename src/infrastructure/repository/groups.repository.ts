@@ -126,11 +126,13 @@ class GroupsRepository implements IRepository<Group> {
 
     public async checkAdmin(groupId: string, memberId: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            this._groupRepoModel.findOne({ _id: groupId })
+            this._groupRepoModel.findOne({ _id: groupId, administrator: memberId })
                 .then((result: any) => {
-                    resolve(result.administrator !== undefined && result.administrator.toString() === memberId)
+                    resolve((result) && (result.administrator.toString() === memberId))
                 })
-                .catch((err: any) => reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR)))
+                .catch((err: any) => {
+                    reject(new RepositoryException(Messages.ERROR_MESSAGE.INTERNAL_SERVER_ERROR))
+                })
         })
     }
 }

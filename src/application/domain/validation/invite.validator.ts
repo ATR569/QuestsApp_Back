@@ -28,14 +28,9 @@ export abstract class InviteValidator {
             if (invite.user === undefined) missingFields.push('user')
             else if (invite.user.email === undefined) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.REQUIRED_FIELDS,
-                    Messages.INVITES.USER_ID_NOT_PROVIDED)
+                    Messages.INVITES.USER_EMAIL_NOT_PROVIDED)
             } else {
-                try {
-                    StringValidator.validate(invite.user.email, 'email')
-                } catch (err) {
-                    throw new ValidationException(Messages.INVITES.INVALID_USER_ID,
-                        Messages.ERROR_MESSAGE.INVALID_ID_DESC)
-                }
+                StringValidator.validate(invite.user.email, 'email')
             }
 
             // Validate status
@@ -59,7 +54,7 @@ export abstract class InviteValidator {
                 if (invite.id === '') {
                     throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                         Messages.ERROR_MESSAGE.INVALID_FIELDS_DESC.replace('{0}', 'id'))
-                    }
+                }
             }
 
             //  Validate status
@@ -70,17 +65,17 @@ export abstract class InviteValidator {
             }
 
             //  Validate fields that cant be updated
-            if (invite.group !== undefined){
+            if (invite.group !== undefined) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                     Messages.INVITES.FIELD_CANT_UPDATED.replace('{0}', 'group'))
             }
 
-            if (invite.user !== undefined){
+            if (invite.user !== undefined) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                     Messages.INVITES.FIELD_CANT_UPDATED.replace('{0}', 'user'))
             }
 
-            if (invite.date !== undefined){
+            if (invite.date !== undefined) {
                 throw new ValidationException(Messages.ERROR_MESSAGE.INVALID_FIELDS,
                     Messages.INVITES.FIELD_CANT_UPDATED.replace('{0}', 'date'))
             }

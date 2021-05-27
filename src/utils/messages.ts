@@ -64,7 +64,7 @@ export abstract class Messages {
 
     public static readonly ANSWERS: any = {
 
-        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da questão não está registrado no sistema!',
+        AUTHOR_ID_NOT_REGISTERED: 'O id fornecido para o criador da resposta não está registrado no sistema!',
         QUESTION_ID_NOT_REGISTERED: 'O id fornecido para a questão da resposta não está registrado no sistema!',
 
     }
@@ -87,6 +87,8 @@ export abstract class Messages {
 
     public static readonly ERROR_MESSAGE: any = {
         INTERNAL_SERVER_ERROR: 'Erro interno do servidor!',
+        FORBIDDEN: 'Acesso negado!',
+        FORBIDDEN_DESC: 'Você não permissão para acessar este recurso.',
         REQUIRED_FIELDS: 'Alguns campos não foram fornecidos.',
         REQUIRED_FIELDS_DESC: 'Os campos: { {0} } são obrigatórios!',
 
@@ -98,5 +100,4 @@ export abstract class Messages {
         DESC_NOT_FOUND: 'Não existe { {0} } de id { {1} }',
         EMPTY_STRING: 'O campo { {0} } deve ter pelo menos um caracter.',
     }
-
 }

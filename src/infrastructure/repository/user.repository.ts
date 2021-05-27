@@ -64,11 +64,12 @@ class UsersRepository implements IRepository<User> {
                 .then((user: any) => {
                     if (!user) {
                         return reject(new NotFoundException(Messages.ERROR_MESSAGE.MSG_NOT_FOUND,
-                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{recurso}', 'user').replace('{id}', user_id)))
+                            Messages.ERROR_MESSAGE.DESC_NOT_FOUND.replace('{0}', 'user').replace('{1}', user_id)))
                     }
 
-                    if (user.password === old_password) {
-                        return this._userRepoModel.findByIdAndUpdate(user_id, { password: new_password })
+                    if (this.comparePasswords(old_password, user.password)) {
+                        const encriptedNewPassword = this.encryptPassword(new_password)
+                        return this._userRepoModel.findByIdAndUpdate(user_id, { password: encriptedNewPassword })
                             .then((result: any) => {
                                 if (!result) {
                                     return reject(false)
