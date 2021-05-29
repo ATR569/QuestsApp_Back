@@ -42,9 +42,14 @@ class QuestionsRepository implements IRepository<Question> {
                 .populate({ path: 'creator', select: '-password' })
                 .populate(
                     {
-                        path: 'answers', select: '-author',
+                        path: 'answers', 
                         populate: [
                             {
+                                path: 'author', select: '-password'
+
+                            },
+
+                            {   
                                 path: 'answerComments',
                                 populate: {
                                     path: 'author', select: '-password'
@@ -68,8 +73,13 @@ class QuestionsRepository implements IRepository<Question> {
                 .populate({ path: 'creator', select: '-password' })
                 .populate(
                     {
-                        path: 'answers', select: '-author',
+                        path: 'answers', 
                         populate: [
+                            {
+                                path: 'author', select: '-password'
+
+                            },
+                            
                             {
                                 path: 'answerComments',
                                 populate: {
